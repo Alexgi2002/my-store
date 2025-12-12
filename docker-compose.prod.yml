@@ -1,0 +1,40 @@
+# Versión alternativa para producción con Traefik (reverse proxy)
+# Usar si tienes Traefik configurado en tu servidor
+
+version: '3.8'
+
+services:
+  store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${STORE_NAME}-store
+    environment:
+      NEXT_PUBLIC_URL: ${NEXT_PUBLIC_URL}
+      NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER}
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      STORE_NAME: ${STORE_NAME}
+      STORE_ICON_URL: ${STORE_ICON_URL}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      NODE_ENV: production
+    restart: unless-stopped
+    networks:
+      - traefik-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      # Traefik Configuration
+      - "traefik.enable=true"
+      - "traefik.http.routers.${STORE_NAME}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${STORE_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.${STORE_NAME}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.${STORE_NAME}.loadbalancer.server.port=3000"
+
+networks:
+  traefik-network:
+    external: true

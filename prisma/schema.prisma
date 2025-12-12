@@ -1,0 +1,56 @@
+// Prisma schema for my-store
+// Uses PostgreSQL via DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image_url   String?  @map("image_url")
+  stock       Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Banner {
+  id         String   @id @default(cuid())
+  title      String
+  image_url  String?  @map("image_url")
+  link       String?
+  active     Boolean  @default(true)
+  order_index Int     @default(0) @map("order_index")
+  created_at DateTime @default(now())
+}
+
+model PushSubscription {
+  id         String   @id @default(cuid())
+  endpoint   String   @unique
+  keys       Json
+  created_at DateTime @default(now())
+}
+
+model Upload {
+  id         String   @id @default(cuid())
+  filename   String
+  path       String
+  mime       String?
+  size       Int?
+  created_at DateTime @default(now())
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  role       String   @default("user")
+  created_at DateTime @default(now())
+}
