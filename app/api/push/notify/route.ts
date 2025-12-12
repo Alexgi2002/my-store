@@ -24,8 +24,8 @@ export async function POST(request: Request) {
     const payload = JSON.stringify({
       title,
       body,
-      icon: "/icon.svg",
-      badge: "/icon.svg",
+      icon: "/icon.jpg",
+      badge: "/icon.jpg",
       data: { type },
     })
 

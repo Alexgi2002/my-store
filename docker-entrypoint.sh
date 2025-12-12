@@ -10,7 +10,7 @@ MANIFEST_FILE="/app/public/manifest.json"
 : "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:=}"
 : "${NEXT_PUBLIC_URL:=http://localhost:3000}"
 : "${NEXT_PUBLIC_WHATSAPP_NUMBER:=}"
-: "${STORE_ICON_URL:=/icon.svg}"
+: "${STORE_ICON_URL:=/icon.jpg}"
 
 cat > "$RUNTIME_FILE" <<-JS
 window.__RUNTIME_CONFIG__ = {
