@@ -58,7 +58,18 @@ Datos de entrega:
 
 ¡Gracias!`
 
-    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "1234567890"
+    // fetch runtime config so whatsapp number can be changed without rebuild
+    let whatsappNumber = "1234567890"
+    try {
+      const res = await fetch('/api/config')
+      if (res.ok) {
+        const cfg = await res.json()
+        whatsappNumber = String(cfg?.whatsapp || whatsappNumber)
+      }
+    } catch (err) {
+      // keep default
+    }
+
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
     // Clear cart and redirect to WhatsApp

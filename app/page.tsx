@@ -7,8 +7,20 @@ import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export default function Home() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""
+export default async function Home() {
+  // fetch runtime config so whatsapp number can be changed without rebuild
+  let whatsappNumber = ""
+  try {
+    const res = await fetch('/api/config', { cache: 'no-store' })
+    if (res.ok) {
+      const cfg = await res.json()
+      whatsappNumber = String(cfg?.whatsapp || "")
+    }
+  } catch (err) {
+    // fallback to env if the config endpoint fails
+    whatsappNumber = process.env.WHATSAPP_NUMBER || ""
+  }
+
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}`
 
   return (
