@@ -44,7 +44,7 @@ services:
     volumes:
       - "${UPLOADS_VOLUME:-uploads}:/app/public/uploads"
     ports:
-      - "${HOST_PORT:-3000}:3000"
+      - "${HOST_PORT:-3130}:3130"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3130/ || exit 1"]
       interval: 30s
