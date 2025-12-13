@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-pgpass}"
+      POSTGRES_DB: store
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+  store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      # Required
+      DATABASE_URL: "postgres://${POSTGRES_USER:-pguser}:${POSTGRES_PASSWORD:-pgpass}@db:5432/${POSTGRES_DB:-store}"
+      NODE_ENV: production
+      NEXT_PUBLIC_URL: "${NEXT_PUBLIC_URL:-http://localhost:3000}"
+
+      # Admin / seguridad
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin123}"
+      ADMIN_TOKEN: "${ADMIN_TOKEN:-}"
+      ADMIN_JWT_SECRET: "${ADMIN_JWT_SECRET:-}"
+
+      # Push (opcional)
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}"
+      VAPID_PRIVATE_KEY: "${VAPID_PRIVATE_KEY:-}"
+
+      # Optional: enable automatic migrations on container start (set as secret/var if desired)
+      RUN_MIGRATIONS: "${RUN_MIGRATIONS:-0}"
+
+    volumes:
+      - uploads:/app/public/uploads
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  pgdata:
+  uploads:
