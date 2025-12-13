@@ -42,7 +42,7 @@ services:
       RUN_MIGRATIONS: "${RUN_MIGRATIONS:-0}"
 
     volumes:
-      - "${UPLOADS_VOLUME:-uploads}:/app/public/uploads"
+      - uploads:/app/public/uploads
     ports:
       - "${HOST_PORT:-3000}:3000"
     healthcheck:
@@ -53,7 +53,9 @@ services:
 
 volumes:
   pgdata:
-  # Allow the uploads volume name to be configurable via UPLOADS_VOLUME env var.
-  # This declares the volume that will be created when you set UPLOADS_VOLUME
-  "${UPLOADS_VOLUME:-uploads}":
+  # The logical volume 'uploads' maps to an underlying Docker volume whose name
+  # can be configured with the UPLOADS_VOLUME environment variable. This keeps
+  # the compose schema valid for Portainer while allowing per-store names.
+  uploads:
+    name: ${UPLOADS_VOLUME:-uploads}
     driver: local
