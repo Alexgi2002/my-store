@@ -42,9 +42,9 @@ services:
       RUN_MIGRATIONS: "${RUN_MIGRATIONS:-0}"
 
     volumes:
-      - uploads:/app/public/uploads
+      - "${UPLOADS_VOLUME:-uploads}:/app/public/uploads"
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:3000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/ || exit 1"]
       interval: 30s

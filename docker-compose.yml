@@ -5,9 +5,9 @@ services:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_USER: pguser
+      POSTGRES_USER: "${POSTGRES_USER:-pguser}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-pgpass}"
-      POSTGRES_DB: store
+      POSTGRES_DB: "${POSTGRES_DB:-store}"
     volumes:
       - pgdata:/var/lib/postgresql/data
     deploy:
@@ -42,11 +42,11 @@ services:
       RUN_MIGRATIONS: "${RUN_MIGRATIONS:-0}"
 
     volumes:
-      - uploads:/app/public/uploads
+      - "${UPLOADS_VOLUME:-uploads}:/app/public/uploads"
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:3000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/ || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:3130/ || exit 1"]
       interval: 30s
       timeout: 3s
       retries: 3
