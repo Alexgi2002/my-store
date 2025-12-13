@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { CartProvider } from "@/lib/use-cart"
 import { Toaster } from "@/components/ui/toaster"
@@ -49,7 +48,6 @@ export default function RootLayout({
           {children}
           <Toaster />
         </CartProvider>
-        <Analytics />
       </body>
     </html>
   )
