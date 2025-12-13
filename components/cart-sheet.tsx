@@ -18,8 +18,8 @@ export function CartSheet() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto py-4">
+    <div className="flex flex-col h-full p-4">
+      <div className="flex-1 overflow-y-auto">
         <div className="space-y-4">
           {items.map((item) => (
             <div key={item.product.id} className="flex gap-4 p-4 border rounded-lg">
@@ -67,13 +67,15 @@ export function CartSheet() {
           ))}
         </div>
       </div>
-      <div className="border-t pt-4 space-y-4">
-        <div className="flex justify-between text-lg font-semibold">
+      <div className="border-t pt-4 space-y-4 px-0">
+        <div className="flex justify-between text-lg font-semibold px-0">
           <span>Total:</span>
           <span>${total.toFixed(2)}</span>
         </div>
         <Button asChild className="w-full" size="lg">
-          <Link href="/checkout">Finalizar compra</Link>
+          <Link className="w-full text-center" href="/checkout">
+            Finalizar compra
+          </Link>
         </Button>
       </div>
     </div>

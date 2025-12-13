@@ -1,51 +1,29 @@
 #!/bin/sh
 set -e
 
-# Generate runtime-config.js from environment variables so client can read them at runtime
-RUNTIME_FILE="/app/public/runtime-config.js"
-MANIFEST_FILE="/app/public/manifest.json"
+# Entry point for the container.
+# - generate a small runtime config for the frontend
+# - optionally run prisma migrations if RUN_MIGRATIONS is set
+# - exec the CMD (pnpm start)
 
-# Default values
-: "${STORE_NAME:=my-store}"
-: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:=}"
-: "${NEXT_PUBLIC_URL:=http://localhost:3000}"
-: "${NEXT_PUBLIC_WHATSAPP_NUMBER:=}"
-: "${STORE_ICON_URL:=/icon.jpg}"
-
-cat > "$RUNTIME_FILE" <<-JS
+echo "[entrypoint] Generating runtime config..."
+mkdir -p /app/public
+cat > /app/public/runtime-config.js <<EOF
 window.__RUNTIME_CONFIG__ = {
-  STORE_NAME: "${STORE_NAME}",
-  NEXT_PUBLIC_VAPID_PUBLIC_KEY: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY}",
-  NEXT_PUBLIC_URL: "${NEXT_PUBLIC_URL}",
-  NEXT_PUBLIC_WHATSAPP_NUMBER: "${NEXT_PUBLIC_WHATSAPP_NUMBER}",
-  STORE_ICON_URL: "${STORE_ICON_URL}"
+  NEXT_PUBLIC_URL: "${NEXT_PUBLIC_URL:-http://localhost:3000}",
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}",
 };
-JS
+EOF
 
-# Generate manifest.json dynamically so each store can have its own name/icon
-cat > "$MANIFEST_FILE" <<-JSON
-{
-  "name": "${STORE_NAME}",
-  "short_name": "${STORE_NAME}",
-  "description": "Tienda ${STORE_NAME}",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "icons": [
-    {
-      "src": "${STORE_ICON_URL}",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
-}
-JSON
-
-# If first arg looks like an option, prefix with pnpm start
-if [ "${1#-}" != "$1" ]; then
-  set -- pnpm start "$@"
+# Run Prisma migrations automatically on container start (safe no-op if nothing to apply)
+echo "[entrypoint] Running Prisma migrations (deploy) if any..."
+# Prefer using the script alias if present
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm prisma:migrate deploy || pnpm prisma migrate deploy || npx prisma migrate deploy || true
+else
+  npx prisma migrate deploy || true
 fi
 
-# Execute the command (default: pnpm start)
+# Start the app
+echo "[entrypoint] Starting app: $@"
 exec "$@"

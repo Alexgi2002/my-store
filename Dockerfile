@@ -16,7 +16,6 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Generar cliente Prisma (necesario para que @prisma/client encuentre .prisma/client)
-# Hacemos esto después de copiar el código para que exista prisma/schema.prisma
 RUN pnpm prisma:generate
 
 # Build de la aplicación
@@ -29,11 +28,13 @@ WORKDIR /app
 
 # Instalar pnpm
 RUN npm install -g pnpm
+
 # Copiar node_modules generados en el builder (incluye @prisma/client generado)
 COPY --from=builder /app/node_modules ./node_modules
 
 # Copiar package files (kept for metadata)
 COPY package.json pnpm-lock.yaml ./
+
 # Copiar archivos compilados desde builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public

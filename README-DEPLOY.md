@@ -1,0 +1,102 @@
+# Despliegue Docker (Portainer) — my-store
+
+Este documento explica, en pasos concretos, cómo desplegar la aplicación `my-store` en Docker/Portainer usando únicamente PostgreSQL.
+
+Contenido
+- ¿Necesito Postgres en Portainer?
+- Archivos añadidos
+- Variables de entorno (requeridas / opcionales)
+- Pasos para desplegar (Portainer Stack)
+- Aplicar migraciones
+- Probar la aplicación (login, crear banner)
+- Buenas prácticas para producción
+
+---
+
+¿Necesito Postgres en Portainer?
+
+No es obligatorio. Tienes dos opciones:
+
+1) (Fácil) Ejecutar Postgres como servicio dentro del mismo Stack en Portainer. Ventaja: todo en un mismo lugar. Desventaja: la DB vive en el mismo host, menos tolerancia a fallos.
+
+2) (Recomendado para producción) Usar una DB gestionada (p. ej. RDS, DigitalOcean DB) o un Postgres separado con volúmenes independientes. La app solo necesita la URL de conexión.
+
+Archivos creados
+- `docker-compose.prod.yml` — Stack listo para pegar en Portainer. Incluye servicio `db` y `store`.
+- `docker-entrypoint.sh` — entrypoint que genera `public/runtime-config.js` y (opcional) ejecuta `prisma migrate deploy` si `RUN_MIGRATIONS=1`.
+
+Variables de entorno (lista y explicación)
+
+Requeridas/Importantes:
+- DATABASE_URL — URL de conexión Postgres (ejemplo: `postgres://pguser:pgpass@db:5432/store`). Si usas `docker-compose.prod.yml` tal como está, se genera automáticamente desde las variables internas.
+- NODE_ENV — `production` (ya establecido en el Compose)
+- NEXT_PUBLIC_URL — URL pública de la app (ej. `https://tienda.midominio.com`). Importante para links en push y manifest.
+- ADMIN_PASSWORD — contraseña para entrar al panel admin (cambiar por defecto)
+- ADMIN_JWT_SECRET — secreto fuerte para firmar JWT admin (recomendado). Usar secreto largo y almacenarlo como Secret en Portainer.
+
+Opcionales:
+- ADMIN_TOKEN — token legacy para admin (si lo pones, se puede usar `x-admin-token`). Si usas cookies JWT, dejar vacío.
+- NEXT_PUBLIC_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY — si vas a usar Web Push.
+- RUN_MIGRATIONS — `1` para ejecutar `prisma migrate deploy` durante el start del contenedor (útil para despliegues automáticos; usar con precaución).
+
+Pasos para desplegar en Portainer (Stack)
+
+1) Entra a Portainer > Stacks > Add stack.
+2) Pega el contenido de `docker-compose.prod.yml`.
+3) En `Environment variables` o `Secrets` configura al menos:
+   - `ADMIN_PASSWORD` (valor fuerte)
+   - `ADMIN_JWT_SECRET` (valor fuerte, preferible como Secret)
+   - Si no quieres Postgres interno: elimina el bloque `db:` y actualiza `DATABASE_URL` apuntando a tu DB externa.
+4) Deploy the stack.
+
+Aplicar migraciones (opciones)
+
+- Opción A (manual/rápida desde tu host):
+  - Levanta solo la DB (si usas el db interno):
+    ```bash
+    docker compose -f docker-compose.prod.yml up -d db
+    ```
+  - Ejecuta migraciones dentro del contenedor `store` usando el script:
+    ```bash
+    docker compose -f docker-compose.prod.yml run --rm store pnpm prisma:migrate deploy
+    ```
+  - Alternativa: ejecutar el SQL en `prisma/migrations/.../migration.sql` directamente contra la DB.
+
+- Opción B (automática en entrypoint):
+  - En el Stack establece `RUN_MIGRATIONS=1` (o `true`). El `docker-entrypoint.sh` intentará correr `pnpm prisma:migrate deploy` antes de arrancar la app. Úsalo solo si confías en que las migraciones son seguras en el arranque.
+
+Probar la app (comandos)
+
+- Login admin (guarda cookie):
+```bash
+curl -s -c cookies.txt -X POST http://localhost:3000/api/admin/auth -H "Content-Type: application/json" -d '{"password":"ADMIN_PASSWORD"}'
+```
+
+- Verificar sesión:
+```bash
+curl -i -b cookies.txt http://localhost:3000/api/admin/me
+```
+
+- Crear banner (usa cookie para autenticación):
+```bash
+curl -i -b cookies.txt -X POST http://localhost:3000/api/banners -H "Content-Type: application/json" -d '{"title":"Oferta","image_url":"/uploads/1.png"}'
+```
+
+Notas sobre reverse proxy y puertos
+- Si colocas esta app detrás de un reverse-proxy (Traefik, Nginx, Caddy), no es necesario mapear el puerto `3000:3000`, puedes eliminar la línea `ports` y dejar que el proxy maneje TLS y routing.
+
+Buenas prácticas / recomendaciones
+- Almacenar `ADMIN_JWT_SECRET` y la `DATABASE_URL` como secrets en Portainer.
+- No exponer Postgres al internet público; si usas DB local dentro del mismo stack, no publiques el puerto 5432.
+- Backups: monta un sistema de backups para el volumen `pgdata` o usa DB gestionada con snapshots.
+- Rotación de claves: rota `ADMIN_JWT_SECRET` ocasionalmente y obliga a re-login si haces cambios críticos.
+
+Si quieres que lo haga por ti
+- Puedo:
+  - Crear el `docker-compose.prod.yml` en el repo (ya lo creé).
+  - Añadir `RUN_MIGRATIONS` por defecto o integrar `prisma migrate deploy` más controlado.
+  - Generar instrucciones específicas para Portainer (cómo crear secrets paso a paso) y/o crear un stack preconfigurado.
+
+¿Deseas que implemente la ejecución automática de migraciones en el `docker-entrypoint.sh` (ya añadido con la flag `RUN_MIGRATIONS`), o prefieres que no haya automatización y que las migraciones se ejecuten manualmente antes del primer arranque?  
+
+— Fin README
