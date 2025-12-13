@@ -41,6 +41,10 @@ services:
       # Migration control: kept for compatibility but entrypoint runs deploy by default
       RUN_MIGRATIONS: "${RUN_MIGRATIONS:-1}"
 
+      STORE_NAME: ${STORE_NAME:-My Store}
+      NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER:-111}
+      STORE_ICON_URL: ${STORE_ICON_URL:-/icon.png}
+
     volumes:
       - uploads:/app/public/uploads
     ports:
