@@ -28,6 +28,9 @@ WORKDIR /app
 
 # Instalar pnpm
 RUN npm install -g pnpm
+ 
+# Instalar utilidades necesarias (curl) para el healthcheck y certificados
+RUN apt-get update && apt-get install -y curl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copiar node_modules generados en el builder (incluye @prisma/client generado)
 COPY --from=builder /app/node_modules ./node_modules
@@ -38,6 +41,8 @@ COPY package.json pnpm-lock.yaml ./
 # Copiar archivos compilados desde builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
+# Copiar carpeta prisma (schema + migrations) para que las migraciones se puedan ejecutar en runtime
+COPY --from=builder /app/prisma ./prisma
 
 # Copiar entrypoint
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh

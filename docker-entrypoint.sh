@@ -17,11 +17,14 @@ EOF
 
 # Run Prisma migrations automatically on container start (safe no-op if nothing to apply)
 echo "[entrypoint] Running Prisma migrations (deploy) if any..."
-# Prefer using the script alias if present
-if command -v pnpm >/dev/null 2>&1; then
-  pnpm prisma:migrate deploy || pnpm prisma migrate deploy || npx prisma migrate deploy || true
-else
+# Call the direct deploy command to avoid accidentally invoking a package.json 'prisma:migrate' dev script.
+# Try npx first (works even if pnpm script alias exists), then try pnpm exec as fallback.
+if command -v npx >/dev/null 2>&1; then
   npx prisma migrate deploy || true
+elif command -v pnpm >/dev/null 2>&1; then
+  pnpm exec prisma migrate deploy || true
+else
+  echo "[entrypoint] prisma CLI not found; skipping migrations"
 fi
 
 # Start the app
