@@ -53,4 +53,7 @@ services:
 
 volumes:
   pgdata:
-  uploads:
+  # Allow the uploads volume name to be configurable via UPLOADS_VOLUME env var.
+  # This declares the volume that will be created when you set UPLOADS_VOLUME
+  "${UPLOADS_VOLUME:-uploads}":
+    driver: local
