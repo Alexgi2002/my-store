@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import type { CustomerInfo } from "@/lib/types"
@@ -179,40 +179,49 @@ Datos de entrega:
             </Card>
           </div>
           <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Resumen del pedido</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.product.id} className="flex gap-4">
-                    <div className="relative h-16 w-16 flex-shrink-0">
-                      <Image
-                        src={item.product.image_url || "/placeholder.svg"}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover rounded"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium">{item.product.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        ${item.product.price} x {item.quantity}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Total:</span>
-                    <span>${total.toFixed(2)}</span>
+            <div className="relative">
+              <Card>
+                {/* Invoice verifier badge in the corner */}
+                <div className="absolute top-3 right-3 pointer-events-none z-10">
+                  <div className="bg-white dark:bg-slate-800 rounded-full p-1 shadow">
+                    <CheckCircle className="h-5 w-5 text-emerald-600" aria-hidden />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <CardHeader>
+                  <CardTitle>Resumen del pedido</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {items.map((item) => (
+                    <div key={item.product.id} className="flex gap-4">
+                      <div className="relative h-16 w-16 flex-shrink-0">
+                        <Image
+                          src={item.product.image_url || "/placeholder.svg"}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium">{item.product.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          ${item.product.price} x {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between text-lg font-semibold">
+                      <span>Total:</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </main>

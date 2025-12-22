@@ -73,6 +73,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`font-sans antialiased`}>
+        <CartProvider>
+          {children}
+          <Toaster />
+        </CartProvider>
     {/* Load runtime config generated at container start (if present) for client-side scripts */}
     <script src="/runtime-config.js"></script>
     {/* Inline script: update header (store name/icon) at runtime from runtime-config so admins' changes reflect immediately */}
@@ -107,10 +111,6 @@ export default function RootLayout({
         }catch(e){}
       })();
     ` }} />
-        <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
       </body>
     </html>
   )
