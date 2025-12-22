@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 const defaultMetadata: Metadata = {
-  title: "Mi Tienda - Productos para tu negocio",
+  title: "Mi Tienda",
   description: "Encuentra los mejores productos para tu negocio",
   // generator: "v0.app",
   manifest: "/manifest.json",
@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!res.ok) return defaultMetadata
     const cfg = await res.json()
 
-  const title = cfg.storeName ? `${String(cfg.storeName)} - Productos para tu negocio` : (defaultMetadata.title as string)
+  const title = cfg.storeName ? `${String(cfg.storeName)}` : (defaultMetadata.title as string)
   const description = String(cfg.storeDescription || defaultMetadata.description || "")
   const icon = String(cfg.storeIcon || "/icon.jpg")
   const ogImage = String(cfg.storeOgImage || icon)
