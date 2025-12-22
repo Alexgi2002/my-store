@@ -8,10 +8,10 @@ import { Toaster } from "@/components/ui/toaster"
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
+const defaultMetadata: Metadata = {
   title: "Mi Tienda - Productos para tu negocio",
   description: "Encuentra los mejores productos para tu negocio",
-  generator: "v0.app",
+  // generator: "v0.app",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -32,6 +32,39 @@ export const metadata: Metadata = {
   },
 }
 
+// Generate dynamic metadata on the server using runtime config read from /api/config
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const base = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
+    const res = await fetch(`${base}/api/config`, { cache: "no-store" })
+  if (!res.ok) return defaultMetadata
+    const cfg = await res.json()
+
+  const title = cfg.storeName ? `${String(cfg.storeName)} - Productos para tu negocio` : (defaultMetadata.title as string)
+  const description = String(cfg.storeDescription || defaultMetadata.description || "")
+  const icon = String(cfg.storeIcon || "/icon.jpg")
+  const ogImage = String(cfg.storeOgImage || icon)
+
+    return {
+      title,
+      description,
+      manifest: "/manifest.json",
+      icons: {
+        icon: [{ url: icon }],
+        apple: icon,
+      },
+      openGraph: {
+        title,
+        description,
+        url: cfg.baseUrl || base,
+        images: [ogImage],
+      },
+    }
+  } catch (e) {
+    return defaultMetadata
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,10 +73,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`font-sans antialiased`}>
-        {/* Load runtime config generated at container start (if present) */}
-        <script src="/runtime-config.js"></script>
-  {/* Set document title at runtime from runtime-config (STORE_NAME) to support per-store branding */}
-  <script dangerouslySetInnerHTML={{ __html: "(function(){try{var c=window.__RUNTIME_CONFIG__||{};var name=c.STORE_NAME||document.title; if(name) document.title = name + ' - Productos para tu negocio'; var meta = document.querySelector('meta[name=description]'); if(meta){ meta.setAttribute('content', (c.STORE_NAME? 'Tienda ' + c.STORE_NAME : meta.content)); } }catch(e){} })();" }} />
+    {/* Load runtime config generated at container start (if present) for client-side scripts */}
+    <script src="/runtime-config.js"></script>
         <CartProvider>
           {children}
           <Toaster />

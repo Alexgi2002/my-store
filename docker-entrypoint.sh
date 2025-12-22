@@ -12,6 +12,11 @@ cat > /app/public/runtime-config.js <<EOF
 window.__RUNTIME_CONFIG__ = {
   NEXT_PUBLIC_URL: "${NEXT_PUBLIC_URL:-http://localhost:3000}",
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}",
+  STORE_NAME: "${STORE_NAME:-}",
+  STORE_DESCRIPTION: "${STORE_DESCRIPTION:-}",
+  STORE_ICON: "${STORE_ICON:-/icon.jpg}",
+  STORE_OG_IMAGE: "${STORE_OG_IMAGE:-/icon.jpg}",
+  WHATSAPP_NUMBER: "${WHATSAPP_NUMBER:-}",
 };
 EOF
 

@@ -13,7 +13,15 @@ export function ProductGrid() {
       try {
         const response = await fetch("/api/products")
         const data = await response.json()
-        setProducts(data)
+        // Guard: API should return an array, but in error cases it may return an object
+        if (Array.isArray(data)) {
+          setProducts(data)
+        } else if (data && Array.isArray(data.products)) {
+          setProducts(data.products)
+        } else {
+          console.warn("[v0] /api/products returned unexpected payload:", data)
+          setProducts([])
+        }
       } catch (error) {
         console.error("[v0] Error loading products:", error)
       } finally {

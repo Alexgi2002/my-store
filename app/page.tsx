@@ -10,11 +10,16 @@ import Link from "next/link"
 export default async function Home() {
   // fetch runtime config so whatsapp number can be changed without rebuild
   let whatsappNumber = ""
+  // defaults for runtime store branding
+  let storeName = "Mi Tienda"
+  let storeIcon = "/icon.jpg"
   try {
     const res = await fetch('/api/config', { cache: 'no-store' })
     if (res.ok) {
       const cfg = await res.json()
       whatsappNumber = String(cfg?.whatsapp || "")
+      storeName = String(cfg?.storeName || "Mi Tienda")
+      storeIcon = String(cfg?.storeIcon || "/icon.jpg")
     }
   } catch (err) {
     // fallback to env if the config endpoint fails
@@ -27,7 +32,11 @@ export default async function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Mi Tienda</h1>
+          <div className="flex items-center gap-3">
+            {/* show store icon next to name - use img tag to avoid external domain config issues */}
+            <img src={storeIcon} alt={storeName} className="h-8 w-8 rounded-full object-cover" />
+            <h1 className="text-2xl font-semibold">{storeName}</h1>
+          </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">

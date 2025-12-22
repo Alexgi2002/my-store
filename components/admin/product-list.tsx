@@ -22,7 +22,19 @@ export function ProductList() {
         headers: (await import("@/components/admin/admin-client")).getAdminHeaders(null),
       })
       const data = await response.json()
-      setProducts(data)
+      if (response.ok) {
+        if (Array.isArray(data)) {
+          setProducts(data)
+        } else if (data && Array.isArray(data.products)) {
+          setProducts(data.products)
+        } else {
+          console.warn("[v0] /api/products returned unexpected payload:", data)
+          setProducts([])
+        }
+      } else {
+        console.error("[v0] /api/products returned error:", data)
+        setProducts([])
+      }
     } catch (error) {
       console.error("[v0] Error fetching products:", error)
     } finally {
