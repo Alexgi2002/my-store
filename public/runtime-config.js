@@ -1,0 +1,9 @@
+window.__RUNTIME_CONFIG__ = {
+  "NEXT_PUBLIC_URL": "http://localhost:3000",
+  "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "",
+  "STORE_NAME": "La shopi",
+  "STORE_DESCRIPTION": "",
+  "STORE_ICON": "/icon.jpg",
+  "STORE_OG_IMAGE": "/icon.jpg",
+  "WHATSAPP_NUMBER": ""
+};

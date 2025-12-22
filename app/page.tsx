@@ -13,15 +13,25 @@ export default async function Home() {
   // defaults for runtime store branding
   let storeName = "Mi Tienda"
   let storeIcon = "/icon.jpg"
-  try {
-    const res = await fetch('/api/config', { cache: 'no-store' })
-    if (res.ok) {
-      const cfg = await res.json()
-      whatsappNumber = String(cfg?.whatsapp || "")
-      storeName = String(cfg?.storeName || "Mi Tienda")
-      storeIcon = String(cfg?.storeIcon || "/icon.jpg")
-    }
+    try {
+      const base = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
+      const res = await fetch(`${base}/api/config`, { cache: 'no-store' })
+      if (res.ok) {
+        const cfg = await res.json()
+      
+        console.log('****************************************************')
+        console.log(cfg)
+        console.log('****************************************************')
+      
+        whatsappNumber = String(cfg?.whatsapp || "")
+        storeName = String(cfg?.storeName || "Mi Tienda")
+        storeIcon = String(cfg?.storeIcon || "/icon.jpg")
+      }
   } catch (err) {
+    console.log('****************************************************')
+    console.log(err)
+    console.log('****************************************************')
+
     // fallback to env if the config endpoint fails
     whatsappNumber = process.env.WHATSAPP_NUMBER || ""
   }
