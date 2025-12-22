@@ -75,6 +75,38 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
     {/* Load runtime config generated at container start (if present) for client-side scripts */}
     <script src="/runtime-config.js"></script>
+    {/* Inline script: update header (store name/icon) at runtime from runtime-config so admins' changes reflect immediately */}
+    <script dangerouslySetInnerHTML={{ __html: `
+      (function(){
+        try{
+          var cfg = (window && window.__RUNTIME_CONFIG__) || {}
+          var name = cfg.storeName || cfg.STORE_NAME || cfg.store_name
+          var icon = cfg.storeIcon || cfg.STORE_ICON || cfg.store_icon
+          var whatsapp = cfg.whatsapp || cfg.WHATSAPP_NUMBER
+          if (name) {
+            var el = document.getElementById('store-name')
+            if (el) el.textContent = name
+            if (typeof document.title === 'string') document.title = name + ' - Productos para tu negocio'
+          }
+          if (icon) {
+            var iel = document.getElementById('store-icon')
+            if (iel) {
+              try { iel.setAttribute('src', icon) } catch(e){}
+            }
+          }
+          // Update WA links (class .whatsapp-link) if present
+          if (whatsapp) {
+            var links = document.querySelectorAll('a.whatsapp-link')
+            links.forEach(function(a){
+              try{
+                var num = String(whatsapp).replace(/\D/g,'')
+                if (num) a.setAttribute('href', 'https://wa.me/' + num)
+              }catch(e){}
+            })
+          }
+        }catch(e){}
+      })();
+    ` }} />
         <CartProvider>
           {children}
           <Toaster />

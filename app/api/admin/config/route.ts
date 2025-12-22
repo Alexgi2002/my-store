@@ -46,10 +46,13 @@ export async function POST(request: Request) {
       WHATSAPP_NUMBER: body.whatsapp || process.env.WHATSAPP_NUMBER || "",
     }
 
-    const js = `window.__RUNTIME_CONFIG__ = ${JSON.stringify(runtime, null, 2)};`
-    const target = path.join(process.cwd(), "public", "runtime-config.js")
-    await fs.mkdir(path.dirname(target), { recursive: true })
-    await fs.writeFile(target, js, "utf8")
+  const js = `window.__RUNTIME_CONFIG__ = ${JSON.stringify(runtime, null, 2)};`
+  const targetJs = path.join(process.cwd(), "public", "runtime-config.js")
+  const targetJson = path.join(process.cwd(), "public", "runtime-config.json")
+  await fs.mkdir(path.dirname(targetJs), { recursive: true })
+  // write both a JS loader and a pure JSON file so server-side code can read it without eval
+  await fs.writeFile(targetJs, js, "utf8")
+  await fs.writeFile(targetJson, JSON.stringify(runtime, null, 2), "utf8")
 
     return NextResponse.json({ ok: true })
   } catch (error) {

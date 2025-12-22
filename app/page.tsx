@@ -33,13 +33,13 @@ export default async function Home() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* show store icon next to name - use img tag to avoid external domain config issues */}
-            <img src={storeIcon} alt={storeName} className="h-8 w-8 rounded-full object-cover" />
-            <h1 className="text-2xl font-semibold">{storeName}</h1>
+            {/* show store icon next to name - add ids so client script can update them when runtime-config changes */}
+            <img id="store-icon" src={storeIcon} alt={storeName} className="h-8 w-8 rounded-full object-cover" />
+            <h1 id="store-name" className="text-2xl font-semibold">{storeName}</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <Link className="whatsapp-link" href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Contactar
               </Link>
