@@ -33,6 +33,7 @@ export function BannerManager() {
   const fetchBanners = async () => {
     try {
       const response = await fetch("/api/banners", {
+        credentials: "include",
         headers: getAdminHeaders(null),
       })
       if (!response.ok) {
@@ -65,6 +66,7 @@ export function BannerManager() {
 
       const response = await fetch("/api/upload", {
         method: "POST",
+        credentials: "include",
         headers: getAdminHeaders(null),
         body: formData,
       })
@@ -91,6 +93,7 @@ export function BannerManager() {
     try {
       const response = await fetch("/api/banners", {
         method: "POST",
+        credentials: "include",
         headers: getAdminHeaders("application/json"),
         body: JSON.stringify(formData),
       })
@@ -117,6 +120,7 @@ export function BannerManager() {
     try {
       const response = await fetch(`/api/banners/${id}`, {
         method: "DELETE",
+        credentials: "include",
         headers: getAdminHeaders(null),
       })
 

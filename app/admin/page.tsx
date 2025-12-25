@@ -25,7 +25,7 @@ export default function AdminPage() {
     // Check server-side cookie session (HttpOnly cookie)
     const check = async () => {
       try {
-        const res = await fetch('/api/admin/me')
+        const res = await fetch('/api/admin/me', { credentials: 'include' })
         if (res.ok) {
           const data = await res.json()
           if (data.authenticated) {
@@ -49,6 +49,7 @@ export default function AdminPage() {
     try {
       const response = await fetch("/api/admin/auth", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       })
@@ -73,7 +74,7 @@ export default function AdminPage() {
 
   const handleLogout = () => {
     // Clear cookie on server and clear local auth flag
-    fetch('/api/admin/logout', { method: 'POST' })
+  fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })
     clearAdminAuth()
     setIsAuthenticated(false)
     setPassword("")
