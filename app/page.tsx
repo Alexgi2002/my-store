@@ -8,33 +8,11 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default async function Home() {
-  // fetch runtime config so whatsapp number can be changed without rebuild
-  let whatsappNumber = ""
+  // Read branding and whatsapp directly from environment variables (set via Portainer)
+  let whatsappNumber = process.env.WHATSAPP_NUMBER || ""
   // defaults for runtime store branding
-  let storeName = "Mi Tienda"
-  let storeIcon = "/icon.jpg"
-    try {
-      const base = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
-      const res = await fetch(`${base}/api/config`, { cache: 'no-store' })
-      if (res.ok) {
-        const cfg = await res.json()
-      
-        console.log('****************************************************')
-        console.log(cfg)
-        console.log('****************************************************')
-      
-        whatsappNumber = String(cfg?.whatsapp || "")
-        storeName = String(cfg?.storeName || "Mi Tienda")
-        storeIcon = String(cfg?.storeIcon || "/icon.jpg")
-      }
-  } catch (err) {
-    console.log('****************************************************')
-    console.log(err)
-    console.log('****************************************************')
-
-    // fallback to env if the config endpoint fails
-    whatsappNumber = process.env.WHATSAPP_NUMBER || ""
-  }
+  let storeName = process.env.STORE_NAME || "Mi Tienda"
+  let storeIcon = process.env.STORE_ICON || "/icon.jpg"
 
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}`
 

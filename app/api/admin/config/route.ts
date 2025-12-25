@@ -33,28 +33,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-    const body = await request.json()
-    // Accept keys and write runtime-config.js into public so the frontend picks it up
-    const runtime = {
-      NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
-      NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "",
-      STORE_NAME: body.storeName || process.env.STORE_NAME || "",
-      STORE_DESCRIPTION: body.storeDescription || process.env.STORE_DESCRIPTION || "",
-      STORE_ICON: body.storeIcon || process.env.STORE_ICON || "/icon.jpg",
-      STORE_OG_IMAGE: body.storeOgImage || process.env.STORE_OG_IMAGE || "/icon.jpg",
-      WHATSAPP_NUMBER: body.whatsapp || process.env.WHATSAPP_NUMBER || "",
-    }
-
-  const js = `window.__RUNTIME_CONFIG__ = ${JSON.stringify(runtime, null, 2)};`
-  const targetJs = path.join(process.cwd(), "public", "runtime-config.js")
-  const targetJson = path.join(process.cwd(), "public", "runtime-config.json")
-  await fs.mkdir(path.dirname(targetJs), { recursive: true })
-  // write both a JS loader and a pure JSON file so server-side code can read it without eval
-  await fs.writeFile(targetJs, js, "utf8")
-  await fs.writeFile(targetJson, JSON.stringify(runtime, null, 2), "utf8")
-
-    return NextResponse.json({ ok: true })
+    // Admin POST updates are disabled. Runtime config must be managed via environment variables
+    // (e.g. set in Portainer) to keep branding immutable and consistent for installed shortcuts.
+    return NextResponse.json({ error: 'Runtime configuration is managed via environment variables; POST disabled' }, { status: 405 })
   } catch (error) {
     console.error("[v0] Error writing runtime config:", error)
     return NextResponse.json({ error: error instanceof Error ? error.message : "Error" }, { status: 500 })

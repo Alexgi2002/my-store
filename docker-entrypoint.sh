@@ -6,32 +6,7 @@ set -e
 # - optionally run prisma migrations if RUN_MIGRATIONS is set
 # - exec the CMD (pnpm start)
 
-echo "[entrypoint] Generating runtime config..."
-mkdir -p /app/public
-cat > /app/public/runtime-config.js <<EOF
-window.__RUNTIME_CONFIG__ = {
-  NEXT_PUBLIC_URL: "${NEXT_PUBLIC_URL:-http://localhost:3000}",
-  NEXT_PUBLIC_VAPID_PUBLIC_KEY: "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}",
-  STORE_NAME: "${STORE_NAME:-}",
-  STORE_DESCRIPTION: "${STORE_DESCRIPTION:-}",
-  STORE_ICON: "${STORE_ICON:-/icon.jpg}",
-  STORE_OG_IMAGE: "${STORE_OG_IMAGE:-/icon.jpg}",
-  WHATSAPP_NUMBER: "${WHATSAPP_NUMBER:-}",
-};
-EOF
-
-# Also write a JSON copy so server-side code can read it without parsing JS
-cat > /app/public/runtime-config.json <<EOF
-{
-  "NEXT_PUBLIC_URL": "${NEXT_PUBLIC_URL:-http://localhost:3000}",
-  "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}",
-  "STORE_NAME": "${STORE_NAME:-}",
-  "STORE_DESCRIPTION": "${STORE_DESCRIPTION:-}",
-  "STORE_ICON": "${STORE_ICON:-/icon.jpg}",
-  "STORE_OG_IMAGE": "${STORE_OG_IMAGE:-/icon.jpg}",
-  "WHATSAPP_NUMBER": "${WHATSAPP_NUMBER:-}"
-}
-EOF
+echo "[entrypoint] Skipping runtime-config generation (branding from environment variables)"
 
 # Run Prisma migrations automatically on container start (safe no-op if nothing to apply)
 echo "[entrypoint] Running Prisma migrations (deploy) if any..."

@@ -32,32 +32,29 @@ const defaultMetadata: Metadata = {
   },
 }
 
-// Generate dynamic metadata on the server using runtime config read from /api/config
+// Generate dynamic metadata on the server using environment variables.
+// We deliberately read from env to make branding immutable and tied to container config.
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const base = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
-    const res = await fetch(`${base}/api/config`, { cache: "no-store" })
-  if (!res.ok) return defaultMetadata
-    const cfg = await res.json()
-
-  const title = cfg.storeName ? `${String(cfg.storeName)}` : (defaultMetadata.title as string)
-  const description = String(cfg.storeDescription || defaultMetadata.description || "")
-  const icon = String(cfg.storeIcon || "/icon.jpg")
-  const ogImage = String(cfg.storeOgImage || icon)
+    const title = process.env.STORE_NAME || (defaultMetadata.title as string)
+    const description = process.env.STORE_DESCRIPTION || (defaultMetadata.description as string)
+    const icon = process.env.STORE_ICON || "/icon.jpg"
+    const ogImage = process.env.STORE_OG_IMAGE || icon
 
     return {
-      title,
-      description,
+      title: String(title),
+      description: String(description),
       manifest: "/manifest.json",
       icons: {
-        icon: [{ url: icon }],
-        apple: icon,
+        icon: [{ url: String(icon) }],
+        apple: String(icon),
       },
       openGraph: {
-        title,
-        description,
-        url: cfg.baseUrl || base,
-        images: [ogImage],
+        title: String(title),
+        description: String(description),
+        url: process.env.NEXT_PUBLIC_URL || base,
+        images: [String(ogImage)],
       },
     }
   } catch (e) {
@@ -74,43 +71,9 @@ export default function RootLayout({
     <html lang="es">
       <body className={`font-sans antialiased`}>
         <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
-    {/* Load runtime config generated at container start (if present) for client-side scripts */}
-    <script src="/runtime-config.js"></script>
-    {/* Inline script: update header (store name/icon) at runtime from runtime-config so admins' changes reflect immediately */}
-    <script dangerouslySetInnerHTML={{ __html: `
-      (function(){
-        try{
-          var cfg = (window && window.__RUNTIME_CONFIG__) || {}
-          var name = cfg.storeName || cfg.STORE_NAME || cfg.store_name
-          var icon = cfg.storeIcon || cfg.STORE_ICON || cfg.store_icon
-          var whatsapp = cfg.whatsapp || cfg.WHATSAPP_NUMBER
-          if (name) {
-            var el = document.getElementById('store-name')
-            if (el) el.textContent = name
-            if (typeof document.title === 'string') document.title = name + ' - Productos para tu negocio'
-          }
-          if (icon) {
-            var iel = document.getElementById('store-icon')
-            if (iel) {
-              try { iel.setAttribute('src', icon) } catch(e){}
-            }
-          }
-          // Update WA links (class .whatsapp-link) if present
-          if (whatsapp) {
-            var links = document.querySelectorAll('a.whatsapp-link')
-            links.forEach(function(a){
-              try{
-                var num = String(whatsapp).replace(/\D/g,'')
-                if (num) a.setAttribute('href', 'https://wa.me/' + num)
-              }catch(e){}
-            })
-          }
-        }catch(e){}
-      })();
-    ` }} />
+              {children}
+              <Toaster />
+            </CartProvider>
       </body>
     </html>
   )

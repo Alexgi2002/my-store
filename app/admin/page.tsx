@@ -12,7 +12,6 @@ import { LogOut } from "lucide-react"
 import { ProductList } from "@/components/admin/product-list"
 import { AddProductForm } from "@/components/admin/add-product-form"
 import { BannerManager } from "@/components/admin/banner-manager"
-import StoreSettings from "@/components/admin/store-settings"
 import { clearAdminAuth } from "@/components/admin/admin-client"
 
 export default function AdminPage() {
@@ -134,7 +133,6 @@ export default function AdminPage() {
           <TabsList>
             <TabsTrigger value="products">Productos</TabsTrigger>
             <TabsTrigger value="banners">Banners</TabsTrigger>
-            <TabsTrigger value="store">Tienda</TabsTrigger>
           </TabsList>
           <TabsContent value="products" className="space-y-8">
             <AddProductForm />
@@ -142,9 +140,6 @@ export default function AdminPage() {
           </TabsContent>
           <TabsContent value="banners">
             <BannerManager />
-          </TabsContent>
-          <TabsContent value="store">
-            <StoreSettings />
           </TabsContent>
         </Tabs>
       </main>
