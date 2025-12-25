@@ -7,6 +7,8 @@ import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   // Read branding and whatsapp directly from environment variables (set via Portainer)
   let whatsappNumber = process.env.WHATSAPP_NUMBER || ""
