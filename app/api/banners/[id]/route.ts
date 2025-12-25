@@ -19,18 +19,21 @@ function checkAdmin(request: Request) {
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    // Debug: log incoming URL and params to help diagnose missing param issues
+    // Resolve params if Next.js provides a Promise-like params object (observed in some versions)
+    const resolvedParams = params && typeof (params as any)?.then === "function" ? await (params as any) : params
+
+    // Debug: log incoming URL and resolved params to help diagnose missing param issues
     try {
-      console.error('[v0] DELETE /api/banners called', { url: request.url, params })
+      console.error('[v0] DELETE /api/banners called', { url: request.url, params: resolvedParams })
     } catch (e) {
       // ignore logging errors
     }
     if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    if (!params || !params.id) {
-      console.error('[v0] Missing banner id in params for delete', { params })
+    if (!resolvedParams || !resolvedParams.id) {
+      console.error('[v0] Missing banner id in params for delete', { params: resolvedParams })
       return NextResponse.json({ error: 'Missing banner id' }, { status: 400 })
     }
-    await prisma.banner.delete({ where: { id: params.id } })
+    await prisma.banner.delete({ where: { id: resolvedParams.id } })
     return NextResponse.json({ success: true })
   } catch (error) {
     // Handle Prisma 'record not found' error (P2025) with a 404 response
@@ -55,8 +58,12 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   try {
     if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
+    const resolvedParams = params && typeof (params as any)?.then === "function" ? await (params as any) : params
+    if (!resolvedParams || !resolvedParams.id) {
+      return NextResponse.json({ error: 'Missing banner id' }, { status: 400 })
+    }
     const updated = await prisma.banner.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         title: body.title,
         image_url: body.image_url || null,
