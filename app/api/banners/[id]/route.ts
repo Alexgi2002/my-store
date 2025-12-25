@@ -19,7 +19,17 @@ function checkAdmin(request: Request) {
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
+    // Debug: log incoming URL and params to help diagnose missing param issues
+    try {
+      console.error('[v0] DELETE /api/banners called', { url: request.url, params })
+    } catch (e) {
+      // ignore logging errors
+    }
     if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!params || !params.id) {
+      console.error('[v0] Missing banner id in params for delete', { params })
+      return NextResponse.json({ error: 'Missing banner id' }, { status: 400 })
+    }
     await prisma.banner.delete({ where: { id: params.id } })
     return NextResponse.json({ success: true })
   } catch (error) {
