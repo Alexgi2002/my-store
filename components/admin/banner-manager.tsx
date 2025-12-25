@@ -18,6 +18,7 @@ export function BannerManager() {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: "",
@@ -111,7 +112,8 @@ export function BannerManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("¿Estás seguro de eliminar este banner?")) return
-
+    setIsDeletingId(id)
+    setError(null)
     try {
       const response = await fetch(`/api/banners/${id}`, {
         method: "DELETE",
@@ -119,13 +121,24 @@ export function BannerManager() {
       })
 
       if (response.ok) {
-        setBanners(banners.filter((b) => b.id !== id))
+        setBanners((prev) => prev.filter((b) => b.id !== id))
       } else {
-        setError("Error al eliminar banner")
+        // try to surface server-provided error message
+        let body: any = null
+        try {
+          body = await response.json()
+        } catch (e) {
+          // ignore
+        }
+        const serverMessage = body?.error || response.statusText || `Status ${response.status}`
+        setError(`Error al eliminar banner: ${serverMessage}`)
+        console.error("[v0] Delete banner failed", { id, status: response.status, body })
       }
-    } catch (error) {
-      console.error("[v0] Error deleting banner:", error)
-      setError("Error al eliminar banner")
+    } catch (err) {
+      console.error("[v0] Error deleting banner:", err)
+      setError(String(err) || "Error al eliminar banner")
+    } finally {
+      setIsDeletingId(null)
     }
   }
 
@@ -214,8 +227,14 @@ export function BannerManager() {
                   <h4 className="font-semibold truncate">{banner.title}</h4>
                   {banner.link && <p className="text-sm text-muted-foreground truncate">Link: {banner.link}</p>}
                 </div>
-                <Button variant="destructive" size="icon" onClick={() => handleDelete(banner.id)}>
-                  <Trash2 className="h-4 w-4" />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => handleDelete(banner.id)}
+                  disabled={isDeletingId === banner.id}
+                  aria-label={`Eliminar banner ${banner.title}`}
+                >
+                  {isDeletingId === banner.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 </Button>
               </div>
             ))}
