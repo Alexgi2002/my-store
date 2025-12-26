@@ -22,7 +22,7 @@ cat > /app/public/manifest.json <<EOF
   "theme_color": "${THEME_COLOR:-#000000}",
   "icons": [
     {
-      "src": "${STORE_ICON:-/icon.jpg}",
+      "src": "${STORE_ICON:-${STORE_ICON_URL:-/icon.jpg}}",
       "sizes": "any",
       "type": "image/png"
     }

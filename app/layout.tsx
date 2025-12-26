@@ -39,8 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
     const base = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
     const title = process.env.STORE_NAME || (defaultMetadata.title as string)
     const description = process.env.STORE_DESCRIPTION || (defaultMetadata.description as string)
-    const icon = process.env.STORE_ICON || "/icon.jpg"
-    const ogImage = process.env.STORE_OG_IMAGE || icon
+  const icon = process.env.STORE_ICON || process.env.STORE_ICON_URL || "/icon.jpg"
+  const ogImage = process.env.STORE_OG_IMAGE || process.env.STORE_OG_IMAGE_URL || icon
 
     return {
       title: String(title),

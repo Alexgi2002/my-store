@@ -14,7 +14,7 @@ export default async function Home() {
   let whatsappNumber = process.env.WHATSAPP_NUMBER || ""
   // defaults for runtime store branding
   let storeName = process.env.STORE_NAME || "Mi Tienda"
-  let storeIcon = process.env.STORE_ICON || "/icon.jpg"
+  let storeIcon = process.env.STORE_ICON || process.env.STORE_ICON_URL || "/icon.jpg"
 
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}`
 

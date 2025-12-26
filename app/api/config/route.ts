@@ -3,8 +3,8 @@ function mapRuntime(obj: any) {
     whatsapp: obj.WHATSAPP_NUMBER || obj.whatsapp || null,
     storeName: obj.STORE_NAME || obj.storeName || null,
     storeDescription: obj.STORE_DESCRIPTION || obj.storeDescription || null,
-    storeIcon: obj.STORE_ICON || obj.storeIcon || null,
-    storeOgImage: obj.STORE_OG_IMAGE || obj.storeOgImage || null,
+  storeIcon: obj.STORE_ICON || obj.STORE_ICON_URL || obj.storeIcon || null,
+  storeOgImage: obj.STORE_OG_IMAGE || obj.STORE_OG_IMAGE_URL || obj.storeOgImage || null,
     baseUrl: obj.NEXT_PUBLIC_URL || obj.baseUrl || null,
   }
 }
