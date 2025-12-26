@@ -24,20 +24,34 @@ if echo "$ICON_SRC" | grep -q "^https:/[^/]"; then
   echo "[entrypoint] Fixed icon URL: $ICON_SRC"
 fi
 
+# Escapar valores para JSON (escapar comillas dobles y backslashes)
+escape_json() {
+  echo "$1" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g'
+}
+
+# Preparar valores escapados para JSON
+STORE_NAME_ESC=$(escape_json "${STORE_NAME:-Mi Tienda}")
+SHORT_NAME_ESC=$(escape_json "${SHORT_NAME:-${STORE_NAME:-Tienda}}")
+STORE_DESC_ESC=$(escape_json "${STORE_DESCRIPTION:-Encuentra los mejores productos para tu negocio}")
+ICON_SRC_ESC=$(escape_json "$ICON_SRC")
+
+# Debug: mostrar valores escapados
+echo "[entrypoint] STORE_DESCRIPTION (escaped): ${STORE_DESC_ESC}"
+
 # Write a manifest.json based on environment variables so installed shortcut (PWA) uses the
 # container-provided name and icon. This overwrites the static file in /public at container start.
 cat > /app/public/manifest.json <<EOF
 {
-  "name": "${STORE_NAME:-Mi Tienda}",
-  "short_name": "${SHORT_NAME:-${STORE_NAME:-Tienda}}",
-  "description": "${STORE_DESCRIPTION:-Encuentra los mejores productos para tu negocio}",
+  "name": "${STORE_NAME_ESC}",
+  "short_name": "${SHORT_NAME_ESC}",
+  "description": "${STORE_DESC_ESC}",
   "start_url": "/",
   "display": "standalone",
   "background_color": "${BACKGROUND_COLOR:-#ffffff}",
   "theme_color": "${THEME_COLOR:-#000000}",
   "icons": [
     {
-      "src": "${ICON_SRC}",
+      "src": "${ICON_SRC_ESC}",
       "sizes": "any",
       "type": "image/png"
     }

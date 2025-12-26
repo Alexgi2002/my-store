@@ -69,6 +69,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <script src="/runtime-config.js" />
+      </head>
       <body className={`font-sans antialiased`}>
         <CartProvider>
               {children}
