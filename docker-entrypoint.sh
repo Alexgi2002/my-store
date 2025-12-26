@@ -9,6 +9,21 @@ set -e
 echo "[entrypoint] Writing manifest.json from environment variables (branding comes from env)"
 mkdir -p /app/public
 
+# Debug: mostrar variables de entorno relevantes
+echo "[entrypoint] STORE_NAME=${STORE_NAME:-(not set)}"
+echo "[entrypoint] STORE_DESCRIPTION=${STORE_DESCRIPTION:-(not set)}"
+echo "[entrypoint] STORE_ICON=${STORE_ICON:-(not set)}"
+echo "[entrypoint] STORE_ICON_URL=${STORE_ICON_URL:-(not set)}"
+
+# Determinar el icono a usar (prioridad: STORE_ICON > STORE_ICON_URL > default)
+ICON_SRC="${STORE_ICON:-${STORE_ICON_URL:-/icon.jpg}}"
+
+# Arreglar URLs que puedan tener problemas de formato (ej: https:/ en lugar de https://)
+if echo "$ICON_SRC" | grep -q "^https:/[^/]"; then
+  ICON_SRC=$(echo "$ICON_SRC" | sed 's|^https:/|https://|')
+  echo "[entrypoint] Fixed icon URL: $ICON_SRC"
+fi
+
 # Write a manifest.json based on environment variables so installed shortcut (PWA) uses the
 # container-provided name and icon. This overwrites the static file in /public at container start.
 cat > /app/public/manifest.json <<EOF
@@ -22,7 +37,7 @@ cat > /app/public/manifest.json <<EOF
   "theme_color": "${THEME_COLOR:-#000000}",
   "icons": [
     {
-      "src": "${STORE_ICON:-${STORE_ICON_URL:-/icon.jpg}}",
+      "src": "${ICON_SRC}",
       "sizes": "any",
       "type": "image/png"
     }
