@@ -12,28 +12,43 @@ export function Header() {
   const [storeIcon, setStoreIcon] = useState("/icon.jpg")
 
   useEffect(() => {
-    // Leer desde runtime-config si está disponible, sino desde API
+    // Leer desde API primero (siempre actualizado), luego desde runtime-config como fallback
     async function loadConfig() {
       if (typeof window !== "undefined") {
         try {
-          // Primero intentar desde runtime-config.js
-          const runtimeConfig = (window as any).__RUNTIME_CONFIG__
-          if (runtimeConfig) {
-            setStoreName(runtimeConfig.STORE_NAME || storeName)
-            setStoreIcon(runtimeConfig.STORE_ICON || runtimeConfig.STORE_ICON_URL || storeIcon)
-            setWhatsappNumber(runtimeConfig.WHATSAPP_NUMBER || "")
+          // Priorizar API que lee directamente de env vars
+          const response = await fetch("/api/config")
+          if (response.ok) {
+            const config = await response.json()
+            if (config.storeName) setStoreName(config.storeName)
+            if (config.storeIcon) setStoreIcon(config.storeIcon)
+            if (config.whatsapp) setWhatsappNumber(config.whatsapp)
           } else {
-            // Fallback: leer desde API
-            const response = await fetch("/api/config")
-            if (response.ok) {
-              const config = await response.json()
-              setStoreName(config.storeName || storeName)
-              setStoreIcon(config.storeIcon || storeIcon)
-              setWhatsappNumber(config.whatsapp || "")
+            // Fallback: leer desde runtime-config.js
+            const runtimeConfig = (window as any).__RUNTIME_CONFIG__
+            if (runtimeConfig) {
+              if (runtimeConfig.STORE_NAME) setStoreName(runtimeConfig.STORE_NAME)
+              if (runtimeConfig.STORE_ICON || runtimeConfig.STORE_ICON_URL) {
+                setStoreIcon(runtimeConfig.STORE_ICON || runtimeConfig.STORE_ICON_URL)
+              }
+              if (runtimeConfig.WHATSAPP_NUMBER) setWhatsappNumber(runtimeConfig.WHATSAPP_NUMBER)
             }
           }
         } catch (e) {
           console.error("Error loading config:", e)
+          // Último fallback: runtime-config.js
+          try {
+            const runtimeConfig = (window as any).__RUNTIME_CONFIG__
+            if (runtimeConfig) {
+              if (runtimeConfig.STORE_NAME) setStoreName(runtimeConfig.STORE_NAME)
+              if (runtimeConfig.STORE_ICON || runtimeConfig.STORE_ICON_URL) {
+                setStoreIcon(runtimeConfig.STORE_ICON || runtimeConfig.STORE_ICON_URL)
+              }
+              if (runtimeConfig.WHATSAPP_NUMBER) setWhatsappNumber(runtimeConfig.WHATSAPP_NUMBER)
+            }
+          } catch (e2) {
+            console.error("Error loading from runtime-config:", e2)
+          }
         }
       }
     }

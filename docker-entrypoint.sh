@@ -24,9 +24,17 @@ if echo "$ICON_SRC" | grep -q "^https:/[^/]"; then
   echo "[entrypoint] Fixed icon URL: $ICON_SRC"
 fi
 
-# Escapar valores para JSON (escapar comillas dobles y backslashes)
+# Escapar valores para JSON
+# Usar node si está disponible para un escape correcto, sino usar sed básico
 escape_json() {
-  echo "$1" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g'
+  if command -v node >/dev/null 2>&1; then
+    # Usar node para escape JSON correcto
+    node -e "console.log(JSON.stringify(process.argv[1]))" "$1" | sed 's/^"//;s/"$//'
+  else
+    # Fallback: escape básico con sed (puede no manejar perfectamente saltos de línea)
+    # Primero backslashes, luego comillas
+    echo "$1" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//'
+  fi
 }
 
 # Preparar valores escapados para JSON
@@ -34,6 +42,9 @@ STORE_NAME_ESC=$(escape_json "${STORE_NAME:-Mi Tienda}")
 SHORT_NAME_ESC=$(escape_json "${SHORT_NAME:-${STORE_NAME:-Tienda}}")
 STORE_DESC_ESC=$(escape_json "${STORE_DESCRIPTION:-Encuentra los mejores productos para tu negocio}")
 ICON_SRC_ESC=$(escape_json "$ICON_SRC")
+WHATSAPP_ESC=$(escape_json "${WHATSAPP_NUMBER:-}")
+NEXT_PUBLIC_URL_ESC=$(escape_json "${NEXT_PUBLIC_URL:-http://localhost:3000}")
+VAPID_KEY_ESC=$(escape_json "${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}")
 
 # Debug: mostrar valores escapados
 echo "[entrypoint] STORE_DESCRIPTION (escaped): ${STORE_DESC_ESC}"
@@ -60,6 +71,35 @@ cat > /app/public/manifest.json <<EOF
 EOF
 
 echo "[entrypoint] manifest.json written to /app/public/manifest.json"
+
+# Write runtime-config.js for frontend
+echo "[entrypoint] Writing runtime-config.js from environment variables"
+cat > /app/public/runtime-config.js <<EOF
+window.__RUNTIME_CONFIG__ = {
+  "NEXT_PUBLIC_URL": "${NEXT_PUBLIC_URL_ESC}",
+  "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "${VAPID_KEY_ESC}",
+  "STORE_NAME": "${STORE_NAME_ESC}",
+  "STORE_DESCRIPTION": "${STORE_DESC_ESC}",
+  "STORE_ICON": "${ICON_SRC_ESC}",
+  "STORE_OG_IMAGE": "${STORE_OG_IMAGE:-${STORE_OG_IMAGE_URL:-${ICON_SRC_ESC}}}",
+  "WHATSAPP_NUMBER": "${WHATSAPP_ESC}"
+};
+EOF
+
+# Also write runtime-config.json for compatibility
+cat > /app/public/runtime-config.json <<EOF
+{
+  "NEXT_PUBLIC_URL": "${NEXT_PUBLIC_URL_ESC}",
+  "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "${VAPID_KEY_ESC}",
+  "STORE_NAME": "${STORE_NAME_ESC}",
+  "STORE_DESCRIPTION": "${STORE_DESC_ESC}",
+  "STORE_ICON": "${ICON_SRC_ESC}",
+  "STORE_OG_IMAGE": "${STORE_OG_IMAGE:-${STORE_OG_IMAGE_URL:-${ICON_SRC_ESC}}}",
+  "WHATSAPP_NUMBER": "${WHATSAPP_ESC}"
+}
+EOF
+
+echo "[entrypoint] runtime-config.js and runtime-config.json written to /app/public/"
 
 # Run Prisma migrations automatically on container start (safe no-op if nothing to apply)
 echo "[entrypoint] Running Prisma migrations (deploy) if any..."

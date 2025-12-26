@@ -18,7 +18,9 @@ export async function GET() {
       STORE_NAME: process.env.STORE_NAME,
       STORE_DESCRIPTION: process.env.STORE_DESCRIPTION,
       STORE_ICON: process.env.STORE_ICON,
+      STORE_ICON_URL: process.env.STORE_ICON_URL,
       STORE_OG_IMAGE: process.env.STORE_OG_IMAGE,
+      STORE_OG_IMAGE_URL: process.env.STORE_OG_IMAGE_URL,
       NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     })
   )
