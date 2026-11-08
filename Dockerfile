@@ -3,17 +3,19 @@ FROM node:20-bookworm-slim AS builder
 
 WORKDIR /app
 
-# Instalar openssl necesario para Prisma
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+# Instalar openssl y ca-certificates (necesarios para que Prisma descargue sus motores HTTPS)
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm@9
+
+# Instalar dependencias permitiendo scripts de postinstall de Prisma
 RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-# Generar cliente Prisma con URL ficticia por si el schema la exige
-RUN DATABASE_URL="postgresql://user:pass@localhost:5432/db" pnpm prisma:generate
+# Ejecutar prisma generate indicando explícitamente la ruta del schema
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 RUN pnpm run build
 
