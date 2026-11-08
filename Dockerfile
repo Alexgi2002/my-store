@@ -1,60 +1,36 @@
 # Build stage
-FROM node:20-bullseye-slim AS builder
+FROM node:20-bookworm-slim AS builder
 
 WORKDIR /app
-
-# Copiar archivos de dependencias
 COPY package.json pnpm-lock.yaml ./
-
-# Instalar pnpm
 RUN npm install -g pnpm
-
-# Instalar dependencias
 RUN pnpm install --frozen-lockfile
-
-# Copiar código fuente
 COPY . .
-
-# Generar cliente Prisma (necesario para que @prisma/client encuentre .prisma/client)
 RUN pnpm prisma:generate
-
-# Build de la aplicación
 RUN pnpm run build
 
 # Production stage
-FROM node:20-bullseye-slim
+FROM node:20-bookworm-slim
 
 WORKDIR /app
-
-# Instalar pnpm
 RUN npm install -g pnpm
- 
-# Instalar utilidades necesarias (curl) para el healthcheck y certificados
-RUN apt-get update && apt-get install -y curl ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Copiar node_modules generados en el builder (incluye @prisma/client generado)
+# Instalar utilidades necesarias
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/node_modules ./node_modules
-
-# Copiar package files (kept for metadata)
 COPY package.json pnpm-lock.yaml ./
-
-# Copiar archivos compilados desde builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-# Copiar carpeta prisma (schema + migrations) para que las migraciones se puedan ejecutar en runtime
 COPY --from=builder /app/prisma ./prisma
 
-# Copiar entrypoint
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
-# Exponer puerto
 EXPOSE 3000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Usar entrypoint que genera runtime config y arranca la app
 ENTRYPOINT ["/bin/sh", "/app/docker-entrypoint.sh"]
 CMD ["pnpm", "start"]
