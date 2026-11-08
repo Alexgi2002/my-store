@@ -10,7 +10,9 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm@9
 
 # Instalar dependencias permitiendo scripts de postinstall de Prisma
-RUN pnpm install --frozen-lockfile
+#RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --shamefully-hoist
+
 
 COPY . .
 
