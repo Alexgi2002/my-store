@@ -30,7 +30,7 @@ ENV NEXT_PRIVATE_LOCAL_WEBPACK=true
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 #RUN pnpm run build
-RUN pnpm run build 2>&1 | tail -n 40
+RUN pnpm run build > /tmp/build.log 2>&1 || (tail -n 50 /tmp/build.log && exit 1)
 
 # Production stage
 FROM node:20-bookworm-slim
