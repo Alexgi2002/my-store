@@ -17,6 +17,18 @@ COPY . .
 # Ejecutar prisma generate indicando explícitamente la ruta del schema
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
+# === VARIABLES PARA TIEMPO DE COMPILACIÓN ===
+# Desactiva la telemetría de Next.js para ahorrar recursos
+ENV NEXT_TELEMETRY_DISABLED=1
+# Evita que librerías como Zod fallen si validan esquemas en el build
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV JWT_SECRET="dummy_secret_for_building_purposes_only"
+ENV NODE_ENV=production
+
+# Optimizar el uso de memoria RAM reduciendo los hilos de Next.js y limitando Node.js
+ENV NEXT_PRIVATE_LOCAL_WEBPACK=true
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
 RUN pnpm run build
 
 # Production stage
