@@ -3,7 +3,7 @@ FROM node:20-bookworm-slim AS builder
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm prisma:generate
@@ -13,7 +13,7 @@ RUN pnpm run build
 FROM node:20-bookworm-slim
 
 WORKDIR /app
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9
 
 # Instalar utilidades necesarias
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
