@@ -34,6 +34,8 @@ export interface Translations {
   // Header
   storeName: string
   whatsappContact: string
+  storeInfoBtn: string
+  close: string
 
   // Home
   noProducts: string
@@ -166,6 +168,8 @@ const es: Translations = {
 
   storeName: 'Mi Tienda',
   whatsappContact: 'Contactar por WhatsApp',
+  storeInfoBtn: 'Info',
+  close: 'Cerrar',
 
   noProducts: 'No hay productos disponibles',
   addToCart: 'Agregar al carrito',
@@ -289,6 +293,8 @@ const en: Translations = {
 
   storeName: 'My Store',
   whatsappContact: 'Contact via WhatsApp',
+  storeInfoBtn: 'Info',
+  close: 'Close',
 
   noProducts: 'No products available',
   addToCart: 'Add to cart',
@@ -412,6 +418,8 @@ const pt: Translations = {
 
   storeName: 'Minha Loja',
   whatsappContact: 'Contatar pelo WhatsApp',
+  storeInfoBtn: 'Info',
+  close: 'Fechar',
 
   noProducts: 'Nenhum produto disponível',
   addToCart: 'Adicionar ao carrinho',

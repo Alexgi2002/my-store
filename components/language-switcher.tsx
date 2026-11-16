@@ -12,7 +12,7 @@ export function LanguageSwitcher() {
       value={language}
       onChange={(e) => setLanguage(e.target.value as typeof language)}
       className={cn(
-        'bg-transparent border border-input rounded-md px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors',
+        'max-w-[140px] bg-transparent border border-input rounded-md px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors',
       )}
     >
       {Object.values(LANGUAGES).map((lang) => (
