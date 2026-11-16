@@ -43,7 +43,10 @@ services:
 
       STORE_NAME: ${STORE_NAME:-My Store}
       WHATSAPP_NUMBER: ${WHATSAPP_NUMBER:-111}
+      STORE_DESCRIPTION: ${STORE_DESCRIPTION:-Encuentra los mejores productos para tu negocio}
+      STORE_ICON: ${STORE_ICON:-/icon.jpg}
       STORE_ICON_URL: ${STORE_ICON_URL:-/icon.png}
+      STORE_OG_IMAGE: ${STORE_OG_IMAGE:-}
 
     volumes:
       - uploads:/app/public/uploads
