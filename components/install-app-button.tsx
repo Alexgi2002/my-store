@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Download, X } from "lucide-react"
+import { useTranslation } from "@/hooks/use-language"
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -10,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallAppButton() {
+  const { t } = useTranslation()
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showInstallBanner, setShowInstallBanner] = useState(false)
 
@@ -54,14 +56,12 @@ export function InstallAppButton() {
       </button>
       <div className="space-y-3 pr-6">
         <div>
-          <h3 className="font-semibold">Instalar aplicación</h3>
-          <p className="text-sm text-muted-foreground">
-            Instala nuestra app para un acceso más rápido y notificaciones de nuevos productos.
-          </p>
+          <h3 className="font-semibold">{t('installApp')}</h3>
+          <p className="text-sm text-muted-foreground">{t('installAppDesc')}</p>
         </div>
         <Button onClick={handleInstall} className="w-full">
           <Download className="mr-2 h-4 w-4" />
-          Instalar ahora
+          {t('installNow')}
         </Button>
       </div>
     </div>

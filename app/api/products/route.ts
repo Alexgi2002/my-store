@@ -1,23 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { verifyAdminJwt, extractAdminJwtFromCookie } from "@/lib/admin"
-
-function checkAdmin(request: Request) {
-  const adminToken = process.env.ADMIN_TOKEN
-  const hasJwtSecret = !!(process.env.ADMIN_JWT_SECRET || process.env.ADMIN_TOKEN)
-  if (!adminToken && !hasJwtSecret) return true // no admin protection configured -> allow
-
-  // Header-based token (backwards compatibility)
-  const provided = request.headers.get("x-admin-token")
-  if (adminToken && provided === adminToken) return true
-
-  // Cookie-based JWT
-  const cookieHeader = request.headers.get("cookie") || null
-  const jwt = extractAdminJwtFromCookie(cookieHeader)
-  if (jwt && verifyAdminJwt(jwt)) return true
-
-  return false
-}
+import { requireAdmin } from "@/lib/admin"
 
 export async function GET() {
   try {
@@ -31,7 +14,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!requireAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
     const created = await prisma.product.create({
       data: {

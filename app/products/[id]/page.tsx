@@ -12,8 +12,10 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { RelatedProducts } from "@/components/related-products"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { useTranslation } from "@/hooks/use-language"
 
 export default function ProductDetailPage() {
+  const { t } = useTranslation()
   const params = useParams()
   const router = useRouter()
   const { id } = params
@@ -32,8 +34,8 @@ export default function ProductDetailPage() {
           setProduct(data)
         } else {
           toast({
-            title: "Error",
-            description: "Producto no encontrado",
+            title: t('error'),
+            description: t('pageNotFoundDesc'),
             variant: "destructive",
           })
           router.push("/")
@@ -41,7 +43,7 @@ export default function ProductDetailPage() {
       } catch (error) {
         console.error("Error fetching product:", error)
         toast({
-          title: "Error",
+          title: t('error'),
           description: "Error al cargar el producto",
           variant: "destructive",
         })
@@ -54,14 +56,14 @@ export default function ProductDetailPage() {
     if (id) {
       fetchProduct()
     }
-  }, [id, router, toast])
+  }, [id, router, toast, t])
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Cargando producto...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     )
@@ -77,7 +79,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     addItem(product)
     toast({
-      title: "Producto agregado",
+      title: t('addToCartShort'),
       description: `${product.name} se agregó al carrito`,
       duration: 2000,
     })
@@ -99,6 +101,8 @@ export default function ProductDetailPage() {
     }
   }
 
+  const stockLabel = product.stock > 0 ? `${product.stock} ${t('units')}` : t('outOfStockShort')
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -106,7 +110,7 @@ export default function ProductDetailPage() {
         {/* Botón de regreso */}
         <Button variant="ghost" onClick={() => router.back()} className="mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver
+          {t('back')}
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -133,12 +137,12 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-6">
             <div>
               <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-              <p className="text-3xl font-semibold text-primary mb-6">${product.price}</p>
+              <p className="text-3xl font-semibold text-primary">${product.price}</p>
             </div>
 
             {product.description && (
               <div>
-                <h2 className="text-xl font-semibold mb-3">Descripción</h2>
+                <h2 className="text-xl font-semibold mb-3">{t('description')}</h2>
                 <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                   {product.description}
                 </p>
@@ -146,9 +150,9 @@ export default function ProductDetailPage() {
             )}
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Stock disponible:</span>
+              <span>{t('stockAvailable')}</span>
               <span className={product.stock > 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
-                {product.stock > 0 ? `${product.stock} unidades` : "Sin stock"}
+                {product.stock > 0 ? stockLabel : t('outOfStockShort')}
               </span>
             </div>
 
@@ -179,11 +183,11 @@ export default function ProductDetailPage() {
                   disabled={product.stock === 0}
                 >
                   {product.stock === 0 ? (
-                    "Sin stock"
+                    t('outOfStockShort')
                   ) : (
                     <>
                       <ShoppingCart className="mr-2 h-5 w-5" />
-                      Agregar al carrito
+                      {t('addToCartShort')}
                     </>
                   )}
                 </Button>
@@ -194,7 +198,7 @@ export default function ProductDetailPage() {
 
         {/* Productos relacionados */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">Productos relacionados</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('relatedProducts')}</h2>
           <RelatedProducts currentProductId={product.id} />
         </div>
       </main>
@@ -216,4 +220,3 @@ export default function ProductDetailPage() {
     </div>
   )
 }
-

@@ -1,0 +1,107 @@
+{
+  "app": {
+    "title": "Mi Tienda",
+    "description": "Encuentra los mejores productos para tu negocio"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "back": "Volver",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "stock": "Stock",
+    "price": "Precio",
+    "total": "Total",
+    "quantity": "Cantidad",
+    "language": "Idioma"
+  },
+  "header": {
+    "contact": "Contactar",
+    "cart": "Carrito de compras"
+  },
+  "footer": {
+    "copyright": "CemiSoft - Derechos Reservados",
+    "admin_shortcut": "Panel de administración (5 toques o pulsación larga)"
+  },
+  "home": {
+    "no_products": "No hay productos disponibles",
+    "related_products": "Productos relacionados"
+  },
+  "product": {
+    "loading": "Cargando producto...",
+    "not_found": "Producto no encontrado",
+    "load_error": "Error al cargar el producto",
+    "added_to_cart": "Producto agregado",
+    "added_to_cart_desc": "{name} se agregó al carrito",
+    "description": "Descripción",
+    "stock_available": "Stock disponible",
+    "stock_units": "{count} unidades",
+    "out_of_stock": "Sin stock",
+    "add_to_cart": "Agregar al carrito",
+    "related": "Productos relacionados"
+  },
+  "cart": {
+    "empty": "Tu carrito está vacío",
+    "empty_desc": "Agrega productos para continuar con tu compra",
+    "view_products": "Ver productos",
+    "title": "Carrito de compras",
+    "checkout": "Finalizar compra",
+    "total": "Total:"
+  },
+  "checkout": {
+    "back_to_store": "Volver a la tienda",
+    "empty_cart": "Tu carrito está vacío",
+    "empty_cart_desc": "Agrega productos para continuar con tu compra",
+    "title": "Finalizar compra",
+    "delivery_info": "Información de entrega",
+    "name": "Nombre completo",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "apartment": "No. Apto/Casa",
+    "send_order": "Enviar pedido por WhatsApp",
+    "processing": "Procesando...",
+    "order_summary": "Resumen del pedido"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "login_title": "Panel de Administración",
+    "password": "Contraseña",
+    "password_placeholder": "Ingresa la contraseña",
+    "login": "Iniciar sesión",
+    "wrong_password": "Contraseña incorrecta",
+    "auth_error": "Error al autenticar",
+    "logout": "Cerrar sesión",
+    "products": "Productos",
+    "banners": "Banners",
+    "info": "Info",
+    "add_product": "Agregar Producto",
+    "edit_product": "Editar Producto",
+    "name": "Nombre",
+    "description": "Descripción",
+    "price": "Precio",
+    "stock": "Cantidad en stock",
+    "image": "Imagen",
+    "image_url_placeholder": "https://ejemplo.com/imagen.jpg",
+    "add_banner": "Agregar Banner",
+    "banner_title": "Título",
+    "banner_link": "Link (opcional)",
+    "active_banners": "Banners Activos",
+    "no_banners": "No hay banners disponibles",
+    "delete_confirm": "¿Estás seguro de eliminar este producto?",
+    "delete_error": "Error al eliminar producto",
+    "add_error": "Error al agregar producto",
+    "update_error": "Error al actualizar producto",
+    "adding": "Agregando...",
+    "updating": "Actualizando...",
+    "config_info": "Información de configuración",
+    "runtime_config": "Runtime config (/api/config)",
+    "manifest": "Manifest (/manifest.json)",
+    "refresh": "Actualizar",
+    "copy": "Copiar",
+    "note": "Nota: estos datos provienen del servidor. Si cambias variables en Portainer, reinicia el contenedor para aplicar cambios."
+  }
+}

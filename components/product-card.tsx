@@ -8,12 +8,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "@/lib/use-cart"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "@/hooks/use-language"
 
 interface ProductCardProps {
   product: Product
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { t } = useTranslation()
   const { addItem, items, updateQuantity, removeItem } = useCart()
   const { toast } = useToast()
 
@@ -25,7 +27,7 @@ export function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation()
     addItem(product)
     toast({
-      title: "Producto agregado",
+      title: t('addToCartShort'),
       description: `${product.name} se agregó al carrito`,
       duration: 2000,
     })
@@ -50,6 +52,8 @@ export function ProductCard({ product }: ProductCardProps) {
       }
     }
   }
+
+  const stockLabel = product.stock > 0 ? `${product.stock} ${t('units')}` : t('outOfStockShort')
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -86,11 +90,11 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : (
           <Button onClick={handleAddToCart} className="w-full" disabled={product.stock === 0}>
             {product.stock === 0 ? (
-              "Sin stock"
+              t('outOfStock')
             ) : (
               <>
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Agregar al carrito
+                {t('addToCart')}
               </>
             )}
           </Button>

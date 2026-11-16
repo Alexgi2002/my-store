@@ -2,9 +2,11 @@
 
 import React, { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslation } from "@/hooks/use-language"
 
 export function Footer() {
   const router = useRouter()
+  const { t } = useTranslation()
 
   // quick access: 5 taps within window OR long-press (>700ms) to go to /admin
   const tapsRef = useRef(0)
@@ -60,7 +62,9 @@ export function Footer() {
   return (
     <footer className="border-t mt-auto relative">
       <div className="container mx-auto px-4 py-6 text-center">
-        <p className="text-sm text-muted-foreground">CemiSoft - Derechos Reservados {new Date().getFullYear()}</p>
+        <p className="text-sm text-muted-foreground">
+          CemiSoft - {t('rightsReserved')} {new Date().getFullYear()}
+        </p>
       </div>
 
       {/* Invisible hotspot: bottom-right corner. Multiple taps or long-press to open admin. */}

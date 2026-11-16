@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react"
 import type { Product } from "@/lib/types"
 import { ProductCard } from "./product-card"
+import { useTranslation } from "@/hooks/use-language"
 
 interface RelatedProductsProps {
   currentProductId: string
 }
 
 export function RelatedProducts({ currentProductId }: RelatedProductsProps) {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -17,7 +19,7 @@ export function RelatedProducts({ currentProductId }: RelatedProductsProps) {
       try {
         const response = await fetch("/api/products")
         const data = await response.json()
-        
+
         if (Array.isArray(data)) {
           // Filtrar el producto actual y obtener productos aleatorios
           const otherProducts = data.filter((p) => p.id !== currentProductId)
@@ -52,7 +54,7 @@ export function RelatedProducts({ currentProductId }: RelatedProductsProps) {
   if (products.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No hay productos relacionados disponibles</p>
+        <p className="text-muted-foreground">{t('noRelatedProducts')}</p>
       </div>
     )
   }
@@ -67,4 +69,3 @@ export function RelatedProducts({ currentProductId }: RelatedProductsProps) {
     </div>
   )
 }
-

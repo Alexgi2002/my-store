@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import webpush from "web-push"
+import { setVapidDetails, sendNotification } from "web-push"
 import { prisma } from "@/lib/prisma"
 
 export async function POST(request: Request) {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Push notifications not configured. Please set VAPID keys." }, { status: 503 })
     }
 
-    webpush.setVapidDetails("mailto:tu-email@ejemplo.com", publicKey, privateKey)
+    setVapidDetails("mailto:tu-email@ejemplo.com", publicKey, privateKey)
 
     const { title, body, type } = await request.json()
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const results = await Promise.allSettled(
       subscriptions.map(async (sub) => {
         try {
-          await webpush.sendNotification(
+          await sendNotification(
             {
               endpoint: sub.endpoint,
               keys: sub.keys as any,

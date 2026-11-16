@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react"
 import type { Product } from "@/lib/types"
 import { ProductCard } from "./product-card"
+import { useTranslation } from "@/hooks/use-language"
 
 export function ProductGrid() {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -45,7 +47,7 @@ export function ProductGrid() {
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No hay productos disponibles</p>
+        <p className="text-muted-foreground">{t('noProducts')}</p>
       </div>
     )
   }

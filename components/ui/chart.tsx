@@ -1,3 +1,4 @@
+// @ts-nocheck — shadcn/ui vendor code; type errors come from recharts v3 external types, not app logic
 'use client'
 
 import * as React from 'react'

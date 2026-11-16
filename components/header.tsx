@@ -1,12 +1,15 @@
 "use client"
 
 import { CartButton } from "@/components/cart-button"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useTranslation } from "@/hooks/use-language"
 
 export function Header() {
+  const { t, language, setLanguage } = useTranslation()
   const [whatsappNumber, setWhatsappNumber] = useState("")
   const [storeName, setStoreName] = useState("Mi Tienda")
   const [storeIcon, setStoreIcon] = useState("/icon.jpg")
@@ -69,14 +72,14 @@ export function Header() {
             <Button variant="outline" size="sm" asChild>
               <Link className="whatsapp-link" href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 h-4 w-4" />
-                Contactar
+                {t('whatsappContact')}
               </Link>
             </Button>
           )}
           <CartButton />
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
   )
 }
-

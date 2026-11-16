@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import Image from "next/image"
 import { EditProductDialog } from "./edit-product-dialog"
+import { useTranslation } from "@/hooks/use-language"
 
 export function ProductList() {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -43,7 +45,7 @@ export function ProductList() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar este producto?")) return
+    if (!confirm(t('confirmDeleteProduct'))) return
 
     try {
       const response = await fetch(`/api/products/${id}`, {
@@ -54,11 +56,11 @@ export function ProductList() {
       if (response.ok) {
         setProducts(products.filter((p) => p.id !== id))
       } else {
-        alert("Error al eliminar producto")
+        alert(t('deleteProductError'))
       }
     } catch (error) {
       console.error("[v0] Error deleting product:", error)
-      alert("Error al eliminar producto")
+      alert(t('deleteProductError'))
     }
   }
 
@@ -66,10 +68,10 @@ export function ProductList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Productos</CardTitle>
+          <CardTitle>{t('productList')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">Cargando...</div>
+          <div className="text-center py-8 text-muted-foreground">{t('loading')}</div>
         </CardContent>
       </Card>
     )
@@ -78,7 +80,7 @@ export function ProductList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Productos ({products.length})</CardTitle>
+        <CardTitle>{t('productList')} ({products.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -97,7 +99,7 @@ export function ProductList() {
                 <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
                 <div className="flex gap-4 mt-1">
                   <span className="text-sm font-medium">${product.price}</span>
-                  <span className="text-sm text-muted-foreground">Stock: {product.stock}</span>
+                  <span className="text-sm text-muted-foreground">{t('productStock')} {product.stock}</span>
                 </div>
               </div>
               <EditProductDialog product={product} onUpdate={fetchProducts} />
@@ -107,7 +109,7 @@ export function ProductList() {
             </div>
           ))}
           {products.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">No hay productos disponibles</div>
+            <div className="text-center py-8 text-muted-foreground">{t('noProductsAdmin')}</div>
           )}
         </div>
       </CardContent>

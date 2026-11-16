@@ -1,23 +1,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { verifyAdminJwt, extractAdminJwtFromCookie } from "@/lib/admin"
+import { requireAdmin } from "@/lib/admin"
 
-function checkAdmin(request: Request) {
-  const adminToken = process.env.ADMIN_TOKEN
-  const hasJwtSecret = !!(process.env.ADMIN_JWT_SECRET || process.env.ADMIN_TOKEN)
-  if (!adminToken && !hasJwtSecret) return true
-
-  const provided = request.headers.get("x-admin-token")
-  if (adminToken && provided === adminToken) return true
-
-  const cookieHeader = request.headers.get("cookie") || null
-  const jwt = extractAdminJwtFromCookie(cookieHeader)
-  if (jwt && verifyAdminJwt(jwt)) return true
-
-  return false
-}
-
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Resolve params if Next.js provides a Promise-like params object (observed in some versions)
     const resolvedParams = params && typeof (params as any)?.then === "function" ? await (params as any) : params
@@ -28,7 +13,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     } catch (e) {
       // ignore logging errors
     }
-    if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!requireAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     if (!resolvedParams || !resolvedParams.id) {
       console.error('[v0] Missing banner id in params for delete', { params: resolvedParams })
       return NextResponse.json({ error: 'Missing banner id' }, { status: 400 })
@@ -54,9 +39,9 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!requireAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
     const resolvedParams = params && typeof (params as any)?.then === "function" ? await (params as any) : params
     if (!resolvedParams || !resolvedParams.id) {

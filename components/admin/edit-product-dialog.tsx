@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Pencil, Loader2 } from "lucide-react"
 import Image from "next/image"
 import { getAdminHeaders } from "@/components/admin/admin-client"
+import { useTranslation } from "@/hooks/use-language"
 
 interface EditProductDialogProps {
   product: Product
@@ -19,6 +20,7 @@ interface EditProductDialogProps {
 }
 
 export function EditProductDialog({ product, onUpdate }: EditProductDialogProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -103,12 +105,12 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Editar Producto</DialogTitle>
+          <DialogTitle>{t('edit')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Nombre</Label>
+              <Label htmlFor="edit-name">{t('productName')}</Label>
               <Input
                 id="edit-name"
                 name="name"
@@ -119,7 +121,7 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-price">Precio</Label>
+              <Label htmlFor="edit-price">{t('price')}</Label>
               <Input
                 id="edit-price"
                 name="price"
@@ -133,7 +135,7 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-description">Descripción</Label>
+            <Label htmlFor="edit-description">{t('productDescription')}</Label>
             <Textarea
               id="edit-description"
               name="description"
@@ -144,7 +146,7 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-stock">Cantidad en stock</Label>
+            <Label htmlFor="edit-stock">{t('stock')}</Label>
             <Input
               id="edit-stock"
               name="stock"
@@ -156,7 +158,7 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
             />
           </div>
           <div className="space-y-2">
-            <Label>Imagen</Label>
+            <Label>{t('image')}</Label>
             {formData.image_url && (
               <div className="relative h-40 w-full rounded-lg overflow-hidden">
                 <Image src={formData.image_url || "/placeholder.svg"} alt="Preview" fill className="object-cover" />
@@ -172,20 +174,20 @@ export function EditProductDialog({ product, onUpdate }: EditProductDialogProps)
               />
               {isUploading && <Loader2 className="h-5 w-5 animate-spin" />}
             </div>
-            <p className="text-xs text-muted-foreground">O ingresa una URL:</p>
+            <p className="text-xs text-muted-foreground">{t('max1mb')}</p>
             <Input
               name="image_url"
               value={formData.image_url}
               onChange={handleChange}
-              placeholder="https://ejemplo.com/imagen.jpg"
+              placeholder={t('imageUrlPlaceholder')}
             />
           </div>
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || isUploading}>
-              {isSubmitting ? "Actualizando..." : "Actualizar Producto"}
+              {isSubmitting ? "Actualizando..." : t('addProductBtn')}
             </Button>
           </div>
         </form>

@@ -3,7 +3,10 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "@/lib/use-cart"
+import { LanguageProvider } from "@/components/language-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { cookies } from "next/headers"
+import { DEFAULT_LANGUAGE, isValidLanguage } from "@/lib/i18n"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -62,21 +65,27 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const langCookie = cookieStore.get("language")?.value
+  const lang: string = langCookie && isValidLanguage(langCookie) ? langCookie : DEFAULT_LANGUAGE
+
   return (
-    <html lang="es">
+    <html lang={lang}>
       <head>
         <script src="/runtime-config.js" />
       </head>
       <body className={`font-sans antialiased`}>
-        <CartProvider>
-              {children}
-              <Toaster />
-            </CartProvider>
+        <LanguageProvider>
+          <CartProvider>
+            {children}
+            <Toaster />
+          </CartProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

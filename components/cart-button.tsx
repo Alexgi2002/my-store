@@ -5,8 +5,10 @@ import { ShoppingCart } from "lucide-react"
 import { useCart } from "@/lib/use-cart"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { CartSheet } from "./cart-sheet"
+import { useTranslation } from "@/hooks/use-language"
 
 export function CartButton() {
+  const { t } = useTranslation()
   const { items } = useCart()
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -24,7 +26,7 @@ export function CartButton() {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle>Carrito de compras</SheetTitle>
+          <SheetTitle>{t('cartTitle')}</SheetTitle>
         </SheetHeader>
         <CartSheet />
       </SheetContent>

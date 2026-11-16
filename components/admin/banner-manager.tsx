@@ -12,8 +12,10 @@ import { Trash2, Loader2, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { getAdminHeaders } from "@/components/admin/admin-client"
+import { useTranslation } from "@/hooks/use-language"
 
 export function BannerManager() {
+  const { t } = useTranslation()
   const [banners, setBanners] = useState<Banner[]>([])
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -114,7 +116,7 @@ export function BannerManager() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar este banner?")) return
+    if (!confirm(t('confirmDeleteBanner'))) return
     setIsDeletingId(id)
     setError(null)
     try {
@@ -157,12 +159,12 @@ export function BannerManager() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Agregar Banner Promocional</CardTitle>
+          <CardTitle>{t('addBanner')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="banner-title">Título</Label>
+              <Label htmlFor="banner-title">{t('bannerTitle')}</Label>
               <Input
                 id="banner-title"
                 value={formData.title}
@@ -172,7 +174,7 @@ export function BannerManager() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Imagen</Label>
+              <Label>{t('image')}</Label>
               {formData.image_url && (
                 <div className="relative h-40 w-full rounded-lg overflow-hidden">
                   <Image src={formData.image_url || "/placeholder.svg"} alt="Preview" fill className="object-cover" />
@@ -188,7 +190,7 @@ export function BannerManager() {
                 />
                 {isUploading && <Loader2 className="h-5 w-5 animate-spin" />}
               </div>
-              <p className="text-xs text-muted-foreground">O ingresa una URL:</p>
+              <p className="text-xs text-muted-foreground">{t('max1mb')}</p>
               <Input
                 value={formData.image_url}
                 onChange={(e) => setFormData((prev) => ({ ...prev, image_url: e.target.value }))}
@@ -196,16 +198,16 @@ export function BannerManager() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="banner-link">Link (opcional)</Label>
+              <Label htmlFor="banner-link">{t('bannerLink')}</Label>
               <Input
                 id="banner-link"
                 value={formData.link}
                 onChange={(e) => setFormData((prev) => ({ ...prev, link: e.target.value }))}
-                placeholder="https://ejemplo.com/oferta"
+                placeholder={t('bannerLinkPlaceholder')}
               />
             </div>
             <Button type="submit" disabled={isSubmitting || isUploading || !formData.image_url}>
-              {isSubmitting ? "Agregando..." : "Agregar Banner"}
+              {isSubmitting ? t('addingBanner') : t('addBannerBtn')}
             </Button>
           </form>
         </CardContent>
@@ -213,7 +215,7 @@ export function BannerManager() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Banners Activos ({banners.length})</CardTitle>
+          <CardTitle>{t('activeBanners')} ({banners.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -243,7 +245,7 @@ export function BannerManager() {
               </div>
             ))}
             {banners.length === 0 && !loading && (
-              <div className="text-center py-8 text-muted-foreground">No hay banners disponibles</div>
+              <div className="text-center py-8 text-muted-foreground">{t('noBanners')}</div>
             )}
           </div>
         </CardContent>

@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Copy } from "lucide-react"
+import { useTranslation } from "@/hooks/use-language"
 
 export default function AdminInfo() {
+  const { t } = useTranslation()
   const [cfg, setCfg] = useState<any | null>(null)
   const [manifest, setManifest] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
@@ -43,18 +45,18 @@ export default function AdminInfo() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Información de configuración</CardTitle>
+        <CardTitle>{t('storeInfo')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Runtime config (/api/config)</h3>
             <div className="flex gap-2">
-              <Button size="sm" onClick={load}>Actualizar</Button>
+              <Button size="sm" onClick={load}>{t('save')}</Button>
             </div>
           </div>
 
-          {loading && <div className="text-muted-foreground">Cargando...</div>}
+          {loading && <div className="text-muted-foreground">{t('loading')}</div>}
           {error && <div className="text-destructive">Error: {error}</div>}
 
           {!loading && cfg && (
@@ -78,7 +80,7 @@ export default function AdminInfo() {
             </pre>
           )}
 
-          <div className="text-sm text-muted-foreground">Nota: estos datos provienen del servidor. Si cambias variables en Portainer, reinicia el contenedor para aplicar cambios.</div>
+          <div className="text-sm text-muted-foreground">{t('configLoadedFromServer')}</div>
         </div>
       </CardContent>
     </Card>

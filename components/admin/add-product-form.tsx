@@ -12,8 +12,10 @@ import { Loader2, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { getAdminHeaders } from "@/components/admin/admin-client"
+import { useTranslation } from "@/hooks/use-language"
 
 export function AddProductForm() {
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState("")
@@ -99,7 +101,7 @@ export function AddProductForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Agregar Producto</CardTitle>
+        <CardTitle>{t('addProduct')}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -112,7 +114,7 @@ export function AddProductForm() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre</Label>
+              <Label htmlFor="name">{t('productName')}</Label>
               <Input
                 id="name"
                 name="name"
@@ -123,7 +125,7 @@ export function AddProductForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Precio</Label>
+              <Label htmlFor="price">{t('price')}</Label>
               <Input
                 id="price"
                 name="price"
@@ -137,7 +139,7 @@ export function AddProductForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description">{t('productDescription')}</Label>
             <Textarea
               id="description"
               name="description"
@@ -148,7 +150,7 @@ export function AddProductForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="stock">Cantidad en stock</Label>
+            <Label htmlFor="stock">{t('stock')}</Label>
             <Input
               id="stock"
               name="stock"
@@ -160,7 +162,7 @@ export function AddProductForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Imagen</Label>
+            <Label>{t('image')}</Label>
             {formData.image_url && (
               <div className="relative h-40 w-full rounded-lg overflow-hidden">
                 <Image src={formData.image_url || "/placeholder.svg"} alt="Preview" fill className="object-cover" />
@@ -176,17 +178,17 @@ export function AddProductForm() {
               />
               {isUploading && <Loader2 className="h-5 w-5 animate-spin" />}
             </div>
-            <p className="text-xs text-muted-foreground">Máx. 1MB. O ingresa una URL:</p>
+            <p className="text-xs text-muted-foreground">{t('max1mb')}</p>
             <Input
               id="image_url"
               name="image_url"
               value={formData.image_url}
               onChange={handleChange}
-              placeholder="https://ejemplo.com/imagen.jpg"
+              placeholder={t('imageUrlPlaceholder')}
             />
           </div>
           <Button type="submit" disabled={isSubmitting || isUploading}>
-            {isSubmitting ? "Agregando..." : "Agregar Producto"}
+            {isSubmitting ? t('adding') : t('addProductBtn')}
           </Button>
         </form>
       </CardContent>

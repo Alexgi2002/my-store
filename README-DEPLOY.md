@@ -32,12 +32,21 @@ Requeridas/Importantes:
 - NODE_ENV — `production` (ya establecido en el Compose)
 - NEXT_PUBLIC_URL — URL pública de la app (ej. `https://tienda.midominio.com`). Importante para links en push y manifest.
 - ADMIN_PASSWORD — contraseña para entrar al panel admin (cambiar por defecto)
-- ADMIN_JWT_SECRET — secreto fuerte para firmar JWT admin (recomendado). Usar secreto largo y almacenarlo como Secret en Portainer.
+- ADMIN_JWT_SECRET — **OBLIGATORIO en producción**. Secreto fuerte para firmar JWT admin. Sin esta variable, todos los endpoints admin (productos, banners, upload, config) rechazan peticiones con 401 por defecto. Usar secreto largo y almacenarlo como Secret en Portainer.
 
 Opcionales:
 - ADMIN_TOKEN — token legacy para admin (si lo pones, se puede usar `x-admin-token`). Si usas cookies JWT, dejar vacío.
 - NEXT_PUBLIC_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY — si vas a usar Web Push.
 - RUN_MIGRATIONS — `1` para ejecutar `prisma migrate deploy` durante el start del contenedor (útil para despliegues automáticos; usar con precaución).
+
+### Seguridad del panel admin (default-deny)
+
+Todos los endpoints admin (`/api/products`, `/api/banners`, `/api/upload`, `/api/admin/config`) están protegidos por defecto.
+
+- Si **no** configuras `ADMIN_JWT_SECRET` ni `ADMIN_TOKEN`, cualquier petición a estos endpoints devuelve **401 No autorizado**.
+- Para habilitar el panel admin, define `ADMIN_JWT_SECRET` (secreto fuerte, recomendado) o `ADMIN_TOKEN` (token legacy) en el entorno.
+- El login se hace mediante `POST /api/admin/auth` con la contraseña de `ADMIN_PASSWORD`, lo que establece una cookie HttpOnly `admin_jwt`.
+- En producción, almacena `ADMIN_JWT_SECRET` y `DATABASE_URL` como Secrets de Portainer, nunca como variables en claro.
 
 Pasos para desplegar en Portainer (Stack)
 

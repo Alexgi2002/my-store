@@ -13,8 +13,10 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import type { CustomerInfo } from "@/lib/types"
 import Image from "next/image"
+import { useTranslation } from "@/hooks/use-language"
 
 export default function CheckoutPage() {
+  const { t } = useTranslation()
   const { items, total, clearCart } = useCart()
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
@@ -91,15 +93,15 @@ Datos de entrega:
           <div className="container mx-auto px-4 py-4">
             <Link href="/" className="inline-flex items-center text-sm hover:underline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Volver a la tienda
+              {t('backToStore')}
             </Link>
           </div>
         </header>
         <main className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-semibold mb-4">Tu carrito está vacío</h1>
-          <p className="text-muted-foreground mb-6">Agrega productos para continuar con tu compra</p>
+          <h1 className="text-2xl font-semibold mb-4">{t('emptyCart')}</h1>
+          <p className="text-muted-foreground mb-6">{t('addProductsToContinue')}</p>
           <Button asChild>
-            <Link href="/">Ver productos</Link>
+            <Link href="/">{t('viewProducts')}</Link>
           </Button>
         </main>
       </div>
@@ -112,22 +114,22 @@ Datos de entrega:
         <div className="container mx-auto px-4 py-4">
           <Link href="/" className="inline-flex items-center text-sm hover:underline">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a la tienda
+            {t('backToStore')}
           </Link>
         </div>
       </header>
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-semibold mb-8">Finalizar compra</h1>
+        <h1 className="text-3xl font-semibold mb-8">{t('checkoutTitle')}</h1>
         <div className="grid lg:grid-cols-2 gap-8">
           <div>
             <Card>
               <CardHeader>
-                <CardTitle>Información de entrega</CardTitle>
+                <CardTitle>{t('deliveryInfo')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nombre completo</Label>
+                    <Label htmlFor="name">{t('fullName')}</Label>
                     <Input
                       id="name"
                       name="name"
@@ -138,7 +140,7 @@ Datos de entrega:
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Teléfono</Label>
+                    <Label htmlFor="phone">{t('phone')}</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -150,7 +152,7 @@ Datos de entrega:
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="address">Dirección</Label>
+                    <Label htmlFor="address">{t('address')}</Label>
                     <Textarea
                       id="address"
                       name="address"
@@ -162,7 +164,7 @@ Datos de entrega:
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="apartment">No. Apto/Casa</Label>
+                    <Label htmlFor="apartment">{t('apartment')}</Label>
                     <Input
                       id="apartment"
                       name="apartment"
@@ -172,7 +174,7 @@ Datos de entrega:
                     />
                   </div>
                   <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-                    {isSubmitting ? "Procesando..." : "Enviar pedido por WhatsApp"}
+                    {isSubmitting ? t('processing') : t('sendOrderByWhatsapp')}
                   </Button>
                 </form>
               </CardContent>
@@ -189,7 +191,7 @@ Datos de entrega:
                 </div>
 
                 <CardHeader>
-                  <CardTitle>Resumen del pedido</CardTitle>
+                  <CardTitle>{t('orderSummary')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {items.map((item) => (
@@ -215,7 +217,7 @@ Datos de entrega:
                   ))}
                   <div className="border-t pt-4">
                     <div className="flex justify-between text-lg font-semibold">
-                      <span>Total:</span>
+                      <span>{t('total')}:</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
                   </div>

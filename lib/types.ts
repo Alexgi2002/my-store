@@ -1,3 +1,11 @@
+import type { Language } from '@/lib/i18n'
+
+export interface ProductTranslation {
+  language: Language
+  name: string
+  description: string | null
+}
+
 export interface Product {
   id: string
   name: string
@@ -7,6 +15,7 @@ export interface Product {
   stock: number
   created_at: string
   updated_at: string
+  translations?: ProductTranslation[]
 }
 
 export interface CartItem {

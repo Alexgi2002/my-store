@@ -1,22 +1,7 @@
 import { NextResponse } from "next/server"
 import fs from "fs/promises"
 import path from "path"
-import { verifyAdminJwt, extractAdminJwtFromCookie } from "@/lib/admin"
-
-function checkAdmin(request: Request) {
-  const adminToken = process.env.ADMIN_TOKEN
-  const hasJwtSecret = !!(process.env.ADMIN_JWT_SECRET || process.env.ADMIN_TOKEN)
-  if (!adminToken && !hasJwtSecret) return true
-
-  const provided = request.headers.get("x-admin-token")
-  if (adminToken && provided === adminToken) return true
-
-  const cookieHeader = request.headers.get("cookie") || null
-  const jwt = extractAdminJwtFromCookie(cookieHeader)
-  if (jwt && verifyAdminJwt(jwt)) return true
-
-  return false
-}
+import { requireAdmin } from "@/lib/admin"
 
 export async function GET() {
   // Return same payload as /api/config but guarded for admin usage (public /api/config remains available)
@@ -32,7 +17,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    if (!checkAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!requireAdmin(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     // Admin POST updates are disabled. Runtime config must be managed via environment variables
     // (e.g. set in Portainer) to keep branding immutable and consistent for installed shortcuts.
     return NextResponse.json({ error: 'Runtime configuration is managed via environment variables; POST disabled' }, { status: 405 })

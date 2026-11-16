@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslation } from "@/hooks/use-language"
 
 export function CartSheet() {
+  const { t } = useTranslation()
   const { items, removeItem, updateQuantity, total } = useCart()
 
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-muted-foreground mb-4">Tu carrito está vacío</p>
+        <p className="text-muted-foreground mb-4">{t('cartEmpty')}</p>
       </div>
     )
   }
@@ -69,12 +71,12 @@ export function CartSheet() {
       </div>
       <div className="border-t pt-4 space-y-4 px-0">
         <div className="flex justify-between text-lg font-semibold px-0">
-          <span>Total:</span>
+          <span>{t('total')}: </span>
           <span>${total.toFixed(2)}</span>
         </div>
         <Button asChild className="w-full" size="lg">
           <Link className="w-full text-center" href="/checkout">
-            Finalizar compra
+            {t('finishPurchase')}
           </Link>
         </Button>
       </div>

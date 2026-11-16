@@ -14,8 +14,10 @@ import { AddProductForm } from "@/components/admin/add-product-form"
 import { BannerManager } from "@/components/admin/banner-manager"
 import AdminInfo from "@/components/admin/admin-info"
 import { clearAdminAuth } from "@/components/admin/admin-client"
+import { useTranslation } from "@/hooks/use-language"
 
 export default function AdminPage() {
+  const { t } = useTranslation()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -65,25 +67,25 @@ export default function AdminPage() {
         }
         setIsAuthenticated(true)
       } else {
-        setError("Contraseña incorrecta")
+        setError(t('incorrectPassword'))
       }
     } catch {
-      setError("Error al autenticar")
+      setError(t('authError'))
     }
   }
 
   const handleLogout = () => {
     // Clear cookie on server and clear local auth flag
-  fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })
-    clearAdminAuth()
-    setIsAuthenticated(false)
-    setPassword("")
+    fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })
+      clearAdminAuth()
+      setIsAuthenticated(false)
+      setPassword("")
   }
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Cargando...</div>
+        <div className="animate-pulse text-muted-foreground">{t('loading')}</div>
       </div>
     )
   }
@@ -93,12 +95,12 @@ export default function AdminPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Panel de Administración</CardTitle>
+            <CardTitle>{t('loginTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -110,7 +112,7 @@ export default function AdminPage() {
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full">
-                Iniciar sesión
+                {t('login')}
               </Button>
             </form>
           </CardContent>
@@ -123,19 +125,19 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Panel de Administración</h1>
+          <h1 className="text-2xl font-semibold">{t('adminTitle')}</h1>
           <Button variant="outline" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
-            Cerrar sesión
+            {t('logout')}
           </Button>
         </div>
       </header>
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="products" className="space-y-8">
           <TabsList>
-            <TabsTrigger value="products">Productos</TabsTrigger>
-            <TabsTrigger value="banners">Banners</TabsTrigger>
-            <TabsTrigger value="info">Info</TabsTrigger>
+            <TabsTrigger value="products">{t('productsTab')}</TabsTrigger>
+            <TabsTrigger value="banners">{t('bannersTab')}</TabsTrigger>
+            <TabsTrigger value="info">{t('infoTab')}</TabsTrigger>
           </TabsList>
           <TabsContent value="products" className="space-y-8">
             <AddProductForm />

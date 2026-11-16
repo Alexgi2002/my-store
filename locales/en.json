@@ -1,0 +1,107 @@
+{
+  "app": {
+    "title": "My Store",
+    "description": "Find the best products for your business"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "stock": "Stock",
+    "price": "Price",
+    "total": "Total",
+    "quantity": "Quantity",
+    "language": "Language"
+  },
+  "header": {
+    "contact": "Contact",
+    "cart": "Shopping cart"
+  },
+  "footer": {
+    "copyright": "CemiSoft - All Rights Reserved",
+    "admin_shortcut": "Admin panel (5 taps or long press)"
+  },
+  "home": {
+    "no_products": "No products available",
+    "related_products": "Related products"
+  },
+  "product": {
+    "loading": "Loading product...",
+    "not_found": "Product not found",
+    "load_error": "Error loading product",
+    "added_to_cart": "Product added",
+    "added_to_cart_desc": "{name} added to cart",
+    "description": "Description",
+    "stock_available": "Stock available",
+    "stock_units": "{count} units",
+    "out_of_stock": "Out of stock",
+    "add_to_cart": "Add to cart",
+    "related": "Related products"
+  },
+  "cart": {
+    "empty": "Your cart is empty",
+    "empty_desc": "Add products to continue with your purchase",
+    "view_products": "View products",
+    "title": "Shopping cart",
+    "checkout": "Checkout",
+    "total": "Total:"
+  },
+  "checkout": {
+    "back_to_store": "Back to store",
+    "empty_cart": "Your cart is empty",
+    "empty_cart_desc": "Add products to continue with your purchase",
+    "title": "Checkout",
+    "delivery_info": "Delivery information",
+    "name": "Full name",
+    "phone": "Phone",
+    "address": "Address",
+    "apartment": "Apt / House No.",
+    "send_order": "Send order via WhatsApp",
+    "processing": "Processing...",
+    "order_summary": "Order summary"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "login_title": "Admin Panel",
+    "password": "Password",
+    "password_placeholder": "Enter the password",
+    "login": "Sign in",
+    "wrong_password": "Incorrect password",
+    "auth_error": "Authentication error",
+    "logout": "Sign out",
+    "products": "Products",
+    "banners": "Banners",
+    "info": "Info",
+    "add_product": "Add Product",
+    "edit_product": "Edit Product",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "stock": "Stock quantity",
+    "image": "Image",
+    "image_url_placeholder": "https://example.com/image.jpg",
+    "add_banner": "Add Banner",
+    "banner_title": "Title",
+    "banner_link": "Link (optional)",
+    "active_banners": "Active Banners",
+    "no_banners": "No banners available",
+    "delete_confirm": "Are you sure you want to delete this product?",
+    "delete_error": "Error deleting product",
+    "add_error": "Error adding product",
+    "update_error": "Error updating product",
+    "adding": "Adding...",
+    "updating": "Updating...",
+    "config_info": "Configuration information",
+    "runtime_config": "Runtime config (/api/config)",
+    "manifest": "Manifest (/manifest.json)",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "note": "Note: this data comes from the server. If you change variables in Portainer, restart the container to apply changes."
+  }
+}
