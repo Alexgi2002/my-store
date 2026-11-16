@@ -1,8 +1,7 @@
 "use client"
 
-import { CartButton } from "@/components/cart-button"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { MessageCircle, Info } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -69,10 +68,14 @@ export function Header() {
   return (
     <header className="border-b overflow-hidden">
       <div className="container mx-auto px-4 py-4 max-w-full">
-        {/* Barra única: tienda a la izquierda, acciones a la derecha */}
+        {/* Barra única: tienda a la izquierda (clickeable -> abre diálogo), acciones a la derecha */}
         <div className="flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between gap-4 w-full overflow-hidden">
-            <Link href="/" className="flex items-center gap-3 min-w-0 overflow-hidden">
+            <Link
+              href="/"
+              onClick={() => setInfoOpen(true)}
+              className="flex items-center gap-3 min-w-0 overflow-hidden cursor-pointer"
+            >
               <img id="store-icon" src={storeIcon} alt={storeName} className="h-8 w-8 rounded-full object-cover shrink-0" />
               <div className="flex flex-col gap-0.5 min-w-0 overflow-hidden">
                 <h1 id="store-name" className="text-2xl font-semibold truncate">{storeName}</h1>
@@ -85,23 +88,6 @@ export function Header() {
             </Link>
 
             <div className="flex items-center gap-2 shrink-0">
-              {whatsappNumber && (
-                <Button variant="outline" size="sm" asChild>
-                  <Link className="whatsapp-link" href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    {t('whatsappContact')}
-                  </Link>
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setInfoOpen(true)}
-                aria-label={t('storeInfoBtn')}
-              >
-                <Info className="h-4 w-4" />
-              </Button>
-              <CartButton />
               <LanguageSwitcher />
             </div>
           </div>
@@ -122,6 +108,21 @@ export function Header() {
             )}
             {storeDescription && (
               <p className="mt-2 text-muted-foreground">{storeDescription}</p>
+            )}
+            {whatsappNumber && (
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="flex items-center gap-2"
+                >
+                  <Link className="whatsapp-link" href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-1 h-4 w-4" />
+                    {t('whatsappContact')}
+                  </Link>
+                </Button>
+              </div>
             )}
           </div>
           <div className="mt-6 flex justify-end">

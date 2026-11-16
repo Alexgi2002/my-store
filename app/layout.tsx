@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "@/lib/use-cart"
 import { LanguageProvider } from "@/components/language-provider"
+import { CartFAB } from "@/components/cart-fab"
 import { Toaster } from "@/components/ui/toaster"
 import { cookies } from "next/headers"
 import { DEFAULT_LANGUAGE, isValidLanguage } from "@/lib/i18n"
@@ -79,11 +80,12 @@ export default async function RootLayout({
       <head>
         <script src="/runtime-config.js" />
       </head>
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased overflow-x-hidden`}>
         <LanguageProvider>
           <CartProvider>
             {children}
             <Toaster />
+            <CartFAB />
           </CartProvider>
         </LanguageProvider>
       </body>
